@@ -1,0 +1,137 @@
+{% extends 'guide/base.html' %}
+
+{% block title %}Guide Dashboard - BridgeIT{% endblock %}
+
+{% block header %}Guide Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Welcome, {{ user.first_name }}!</h5>
+            </div>
+            <div class="card-body">
+                {% if guide_profile %}
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            {% if guide_profile.logo %}
+                                <img src="{{ guide_profile.logo.url }}" alt="{{ guide_profile.user.get_full_name }}" class="guide-logo rounded-circle">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h4>{{ guide_profile.user.get_full_name }}</h4>
+                            <p>{{ guide_profile.bio|truncatewords:30 }}</p>
+                            <p><i class="bi bi-briefcase"></i> {{ guide_profile.position }} at {{ guide_profile.company }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Complete Your Profile</h5>
+                        <p>Please complete your guide profile to get started.</p>
+                        <a href="{% url 'update_guide_profile' %}" class="btn btn-primary">Update Profile</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Exams</h5>
+                        <h2>{{ total_exams }}</h2>
+                    </div>
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-file-earmark-text text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Courses</h5>
+                        <h2>{{ total_courses }}</h2>
+                    </div>
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-book text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Posts</h5>
+                        <h2>{{ total_posts }}</h2>
+                    </div>
+                    <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-chat-square-text text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'manage_exams' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-file-earmark-text me-2"></i>Manage Exams
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_exam' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-circle me-2"></i>Add Exam
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'manage_courses' %}" class="btn btn-success w-100">
+                            <i class="bi bi-book me-2"></i>Manage Courses
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_course' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle me-2"></i>Add Course
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'create_post' %}" class="btn btn-info w-100">
+                            <i class="bi bi-pencil-square me-2"></i>Create Post
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'update_guide_profile' %}" class="btn btn-warning w-100">
+                            <i class="bi bi-person me-2"></i>Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

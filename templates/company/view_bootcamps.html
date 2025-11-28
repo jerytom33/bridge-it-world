@@ -1,0 +1,97 @@
+{% extends 'company/base.html' %}
+
+{% block title %}Company Bootcamps - BridgeIT{% endblock %}
+
+{% block header %}Company Bootcamps{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0">Manage your company bootcamps</p>
+    <a href="{% url 'create_company_bootcamp' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New Bootcamp
+    </a>
+</div>
+
+{% if company_bootcamps %}
+    <div class="row">
+        {% for bootcamp in company_bootcamps %}
+            <div class="col-md-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">{{ bootcamp.title }}</h5>
+                            {% if bootcamp.is_certified %}
+                                <span class="badge bg-success">Certified</span>
+                            {% endif %}
+                        </div>
+                        <p class="card-text">{{ bootcamp.description|truncatewords:30 }}</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-event"></i> Duration: {{ bootcamp.duration }}
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                {% if bootcamp.price %}
+                                    <small class="text-muted">
+                                        <i class="bi bi-currency-dollar"></i> Price: ₹{{ bootcamp.price }}
+                                    </small>
+                                {% else %}
+                                    <small class="text-muted">
+                                        <i class="bi bi-currency-dollar"></i> Free
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-check"></i> Start: {{ bootcamp.start_date }}
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-x"></i> End: {{ bootcamp.end_date }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        {% if bootcamp.link %}
+                            <div class="mt-2">
+                                <a href="{{ bootcamp.link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-box-arrow-up-right"></i> Register
+                                </a>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">
+                                Created: {{ bootcamp.created_at|date:"M d, Y" }}
+                            </small>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <i class="bi bi-book" style="font-size: 3rem; color: #ccc;"></i>
+            <h4 class="mt-3">No Bootcamps Yet</h4>
+            <p class="text-muted">Create your first company bootcamp to help students develop skills.</p>
+            <a href="{% url 'create_company_bootcamp' %}" class="btn btn-primary">Create Bootcamp</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

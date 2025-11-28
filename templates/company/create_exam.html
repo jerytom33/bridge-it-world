@@ -1,0 +1,64 @@
+{% extends 'company/base.html' %}
+
+{% block title %}Create Company Exam - BridgeIT{% endblock %}
+
+{% block header %}Create Company Exam{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Add New Exam</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Exam Title *</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="exam_date" class="form-label">Exam Date *</label>
+                            <input type="date" class="form-control" id="exam_date" name="exam_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="registration_deadline" class="form-label">Registration Deadline *</label>
+                            <input type="date" class="form-control" id="registration_deadline" name="registration_deadline" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="level" class="form-label">Level *</label>
+                            <select class="form-select" id="level" name="level" required>
+                                <option value="">Select Level</option>
+                                <option value="10">10th</option>
+                                <option value="12">12th</option>
+                                <option value="ug">UG</option>
+                                <option value="pg">PG</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="link" class="form-label">Registration Link</label>
+                            <input type="url" class="form-control" id="link" name="link" placeholder="https://example.com/register">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'view_company_exams' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Create Exam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Exams - BridgeIT Admin Panel{% endblock %}
+
+{% block header %}Manage Exams{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Add New Exam</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="examTitle" class="form-label">Exam Title</label>
+                    <input type="text" class="form-control" id="examTitle" name="title" placeholder="Enter exam title" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="examCategory" class="form-label">Category</label>
+                    <input type="text" class="form-control" id="examCategory" name="category" placeholder="Enter category" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="examLevel" class="form-label">Level</label>
+                    <input type="text" class="form-control" id="examLevel" name="level" placeholder="Enter level (10th, 12th, UG, etc.)" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="examDate" class="form-label">Last Date</label>
+                    <input type="date" class="form-control" id="examDate" name="last_date" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="examLink" class="form-label">Official Link</label>
+                <input type="url" class="form-control" id="examLink" name="link" placeholder="https://example.com" required>
+            </div>
+            <div class="mb-3">
+                <label for="examDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="examDescription" name="description" rows="3" placeholder="Enter exam description" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Exam
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Existing Exams</h5>
+        <div>
+            <input type="text" class="form-control form-control-sm" placeholder="Search exams..." style="width: 200px;">
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Level</th>
+                        <th>Last Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exam in exams %}
+                    <tr>
+                        <td>{{ exam.title }}</td>
+                        <td>{{ exam.category }}</td>
+                        <td>{{ exam.level }}</td>
+                        <td>{{ exam.last_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if exam.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editExam('{{ exam.id }}')">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteExam('{{ exam.id }}')">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No exams found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    function editExam(id) {
+        // In a real application, this would redirect to an edit page or open a modal
+        alert('Edit exam with ID: ' + id);
+    }
+
+    function deleteExam(id) {
+        if (confirm('Are you sure you want to delete this exam?')) {
+            // In a real application, this would make an AJAX call to delete the exam
+            alert('Exam deleted successfully!');
+            // Remove the row from the table
+            event.target.closest('tr').remove();
+        }
+    }
+</script>
+{% endblock %}

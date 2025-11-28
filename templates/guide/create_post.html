@@ -1,0 +1,54 @@
+{% extends 'guide/base.html' %}
+
+{% block title %}Create Post - BridgeIT{% endblock %}
+
+{% block header %}Create New Post{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Create Post</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="postType" class="form-label">Post Type</label>
+                        <select class="form-select" id="postType" name="post_type">
+                            <option value="text">Text</option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="6" placeholder="Write your post content here..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3" id="mediaUrlSection" style="display: none;">
+                        <label for="mediaUrl" class="form-label">Media URL</label>
+                        <input type="url" class="form-control" id="mediaUrl" name="media_url" placeholder="Enter image or video URL">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Publish Post</button>
+                    <a href="{% url 'guide_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('postType').addEventListener('change', function() {
+        const mediaUrlSection = document.getElementById('mediaUrlSection');
+        if (this.value === 'text') {
+            mediaUrlSection.style.display = 'none';
+        } else {
+            mediaUrlSection.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

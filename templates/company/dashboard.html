@@ -1,0 +1,167 @@
+{% extends 'company/base.html' %}
+
+{% block title %}Company Dashboard - BridgeIT{% endblock %}
+
+{% block header %}Company Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Welcome, {{ user.first_name }}!</h5>
+            </div>
+            <div class="card-body">
+                {% if company_profile %}
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            {% if company_profile.logo %}
+                                <img src="{{ company_profile.logo.url }}" alt="{{ company_profile.company_name }}" class="company-logo rounded-circle">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-building text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h4>{{ company_profile.company_name }}</h4>
+                            <p>{{ company_profile.description|truncatewords:30 }}</p>
+                            <p><i class="bi bi-geo-alt"></i> {{ company_profile.location }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <h5><i class="bi bi-exclamation-triangle"></i> Complete Your Profile</h5>
+                        <p>Please complete your company profile to get started.</p>
+                        <a href="{% url 'update_company_profile' %}" class="btn btn-primary">Update Profile</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Job Postings</h5>
+                        <h2>{{ job_postings.count }}</h2>
+                    </div>
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-briefcase text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Feed Posts</h5>
+                        <h2>{{ feed_posts.count }}</h2>
+                    </div>
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-chat-square-text text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Company Exams</h5>
+                        <h2>{{ company_exams.count }}</h2>
+                    </div>
+                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-file-earmark-text text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Company Bootcamps</h5>
+                        <h2>{{ company_bootcamps.count }}</h2>
+                    </div>
+                    <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-book text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Job Postings</h5>
+                <a href="{% url 'create_job_posting' %}" class="btn btn-sm btn-primary">Create New</a>
+            </div>
+            <div class="card-body">
+                {% if job_postings %}
+                    {% for job in job_postings|slice:":5" %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <h6>{{ job.title }}</h6>
+                            <p class="mb-1"><small class="text-muted">{{ job.job_type|title }} | {{ job.experience_level|title }}</small></p>
+                            <p class="mb-2">{{ job.description|truncatewords:15 }}</p>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">
+                                    <i class="bi bi-eye"></i> {{ job.views_count }} 
+                                    <i class="bi bi-heart"></i> {{ job.likes_count }} 
+                                    <i class="bi bi-bookmark"></i> {{ job.saves_count }}
+                                </small>
+                                <small class="text-muted">{{ job.created_at|date:"M d, Y" }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'view_job_postings' %}" class="btn btn-outline-primary btn-sm">View All Jobs</a>
+                {% else %}
+                    <p class="text-muted">No job postings yet.</p>
+                    <a href="{% url 'create_job_posting' %}" class="btn btn-primary">Create Your First Job Posting</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Feed Posts</h5>
+                <a href="{% url 'view_feed_posts' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if feed_posts %}
+                    {% for post in feed_posts|slice:":5" %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <p>{{ post.content|truncatewords:20 }}</p>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">
+                                    <i class="bi bi-eye"></i> {{ post.views_count }} 
+                                    <i class="bi bi-heart"></i> {{ post.likes_count }} 
+                                    <i class="bi bi-chat"></i> {{ post.comments_count }}
+                                </small>
+                                <small class="text-muted">{{ post.created_at|date:"M d, Y" }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No feed posts yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

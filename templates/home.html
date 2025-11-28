@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}BridgeIT - Career Guidance Platform{% endblock %}
+
+{% block header %}Welcome to BridgeIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron text-center bg-light p-5 rounded">
+            <h1 class="display-4">BridgeIT Career Guidance Platform</h1>
+            <p class="lead">Connecting students with career guides and opportunities</p>
+            <hr class="my-4">
+            <p>Join our platform as a guide or company to help students achieve their career goals.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Register as a Guide</h5>
+                <p class="card-text">Are you a career expert? Share your knowledge and help students navigate their career paths.</p>
+                <a href="{% url 'register_guide' %}" class="btn btn-primary">Register as Guide</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Register as a Company</h5>
+                <p class="card-text">Looking for talented candidates? Post job opportunities and connect with potential employees.</p>
+                <a href="{% url 'register_company' %}" class="btn btn-success">Register as Company</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Already have an account?</h5>
+            </div>
+            <div class="card-body">
+                <p>If you're already registered, you can log in to access your dashboard:</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'guide_login' %}" class="btn btn-outline-primary">Guide Login</a>
+                    <a href="{% url 'company_login' %}" class="btn btn-outline-success">Company Login</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">Admin Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

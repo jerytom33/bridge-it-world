@@ -1,0 +1,75 @@
+{% extends 'company/base.html' %}
+
+{% block title %}Update Company Profile - BridgeIT{% endblock %}
+
+{% block header %}Update Company Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Company Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="company_name" class="form-label">Company Name *</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name" value="{{ company_profile.company_name|default:'' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="industry" class="form-label">Industry *</label>
+                            <input type="text" class="form-control" id="industry" name="industry" value="{{ company_profile.industry|default:'' }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Company Description *</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required>{{ company_profile.description|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="website" class="form-label">Website</label>
+                            <input type="url" class="form-control" id="website" name="website" value="{{ company_profile.website|default:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="established" class="form-label">Established Year</label>
+                            <input type="number" class="form-control" id="established" name="established" min="1900" max="2030" value="{{ company_profile.established|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="employee_count" class="form-label">Employee Count</label>
+                            <input type="text" class="form-control" id="employee_count" name="employee_count" value="{{ company_profile.employee_count|default:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" value="{{ company_profile.location|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_email" class="form-label">Contact Email</label>
+                            <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ company_profile.contact_email|default:'' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_phone" class="form-label">Contact Phone</label>
+                            <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ company_profile.contact_phone|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'company_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

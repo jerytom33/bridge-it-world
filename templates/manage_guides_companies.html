@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Guides & Companies - BridgeIT Admin Panel{% endblock %}
+
+{% block header %}Manage Guides & Companies{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs mb-4" id="approvalTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="guides-tab" data-bs-toggle="tab" data-bs-target="#guides" type="button" role="tab">Guides</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies" type="button" role="tab">Companies</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="approvalTabsContent">
+    <!-- Guides Tab -->
+    <div class="tab-pane fade show active" id="guides" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Pending Guide Approvals</h5>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..." style="width: 200px;">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for guide in pending_guides %}
+                            <tr>
+                                <td>{{ guide.user.get_full_name|default:guide.user.username }}</td>
+                                <td>{{ guide.user.email }}</td>
+                                <td>{{ guide.phone|default:"N/A" }}</td>
+                                <td>{{ guide.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" onclick="approveGuide('{{ guide.id }}')">
+                                        <i class="bi bi-check-circle"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectGuide('{{ guide.id }}')">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No pending guide approvals</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Approved Guides</h5>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..." style="width: 200px;">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for guide in approved_guides %}
+                            <tr>
+                                <td>{{ guide.user.get_full_name|default:guide.user.username }}</td>
+                                <td>{{ guide.user.email }}</td>
+                                <td>{{ guide.phone|default:"N/A" }}</td>
+                                <td>{{ guide.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="blockUser('{{ guide.id }}')">
+                                        <i class="bi bi-person-x"></i> Block
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No approved guides</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies Tab -->
+    <div class="tab-pane fade" id="companies" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Pending Company Approvals</h5>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..." style="width: 200px;">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Contact Person</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in pending_companies %}
+                            <tr>
+                                <td>{{ company.user.get_full_name|default:company.user.username }}</td>
+                                <td>{{ company.user.get_full_name|default:company.user.username }}</td>
+                                <td>{{ company.user.email }}</td>
+                                <td>{{ company.phone|default:"N/A" }}</td>
+                                <td>{{ company.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success" onclick="approveCompany('{{ company.id }}')">
+                                        <i class="bi bi-check-circle"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectCompany('{{ company.id }}')">
+                                        <i class="bi bi-x-circle"></i> Reject
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No pending company approvals</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Approved Companies</h5>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..." style="width: 200px;">
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Contact Person</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in approved_companies %}
+                            <tr>
+                                <td>{{ company.user.get_full_name|default:company.user.username }}</td>
+                                <td>{{ company.user.get_full_name|default:company.user.username }}</td>
+                                <td>{{ company.user.email }}</td>
+                                <td>{{ company.phone|default:"N/A" }}</td>
+                                <td>{{ company.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="blockUser('{{ company.id }}')">
+                                        <i class="bi bi-person-x"></i> Block
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No approved companies</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function approveGuide(id) {
+        if (confirm('Are you sure you want to approve this guide?')) {
+            // Create a form to submit the POST request
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "approve_guide" 0 %}'.replace('0', id);
+            
+            // Add CSRF token
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            form.appendChild(csrfToken);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function rejectGuide(id) {
+        if (confirm('Are you sure you want to reject this guide? This will permanently delete the application.')) {
+            // Create a form to submit the POST request
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "reject_guide" 0 %}'.replace('0', id);
+            
+            // Add CSRF token
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            form.appendChild(csrfToken);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function approveCompany(id) {
+        if (confirm('Are you sure you want to approve this company?')) {
+            // Create a form to submit the POST request
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "approve_company" 0 %}'.replace('0', id);
+            
+            // Add CSRF token
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            form.appendChild(csrfToken);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function rejectCompany(id) {
+        if (confirm('Are you sure you want to reject this company? This will permanently delete the application.')) {
+            // Create a form to submit the POST request
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "reject_company" 0 %}'.replace('0', id);
+            
+            // Add CSRF token
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            form.appendChild(csrfToken);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function blockUser(id) {
+        if (confirm('Are you sure you want to block this user?')) {
+            // In a real application, this would make an AJAX call to block the user
+            alert('User blocked successfully!');
+            // Remove the row from the table
+            event.target.closest('tr').remove();
+        }
+    }
+</script>
+{% endblock %}

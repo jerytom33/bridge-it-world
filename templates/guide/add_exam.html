@@ -1,0 +1,59 @@
+{% extends 'guide/base.html' %}
+
+{% block title %}Add Exam - BridgeIT{% endblock %}
+
+{% block header %}Add New Exam{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Exam Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Exam Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category" name="category" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="level" class="form-label">Level</label>
+                        <select class="form-select" id="level" name="level" required>
+                            <option value="10th">10th</option>
+                            <option value="12th">12th</option>
+                            <option value="ug">UG</option>
+                            <option value="pg">PG</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="last_date" class="form-label">Last Date</label>
+                        <input type="date" class="form-control" id="last_date" name="last_date" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="link" class="form-label">Link</label>
+                        <input type="url" class="form-control" id="link" name="link">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add Exam</button>
+                    <a href="{% url 'manage_exams' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

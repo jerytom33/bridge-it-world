@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics - BridgeIT Admin Panel{% endblock %}
+
+{% block header %}Statistics & Analytics{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <h2>{{ total_users }}</h2>
+                <p class="mb-0"><i class="bi bi-arrow-up-circle"></i> 12% from last month</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Active Guides</h5>
+                <h2>{{ total_guides }}</h2>
+                <p class="mb-0"><i class="bi bi-arrow-up-circle"></i> 5% from last month</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Companies</h5>
+                <h2>{{ total_companies }}</h2>
+                <p class="mb-0"><i class="bi bi-arrow-up-circle"></i> 8% from last month</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card stat-card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Courses</h5>
+                <h2>{{ total_courses }}</h2>
+                <p class="mb-0"><i class="bi bi-arrow-up-circle"></i> 15% from last month</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">User Registration Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="userTrendChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">User Distribution by Role</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="userRoleChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Top Career Paths</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="careerPathChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Course Engagement</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="courseEngagementChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent User Activity</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith</td>
+                                <td>Logged in</td>
+                                <td>2 minutes ago</td>
+                                <td>192.168.1.101</td>
+                            </tr>
+                            <tr>
+                                <td>Sarah Johnson</td>
+                                <td>Viewed course</td>
+                                <td>5 minutes ago</td>
+                                <td>192.168.1.102</td>
+                            </tr>
+                            <tr>
+                                <td>Michael Brown</td>
+                                <td>Added exam</td>
+                                <td>10 minutes ago</td>
+                                <td>192.168.1.103</td>
+                            </tr>
+                            <tr>
+                                <td>Emily Davis</td>
+                                <td>Updated profile</td>
+                                <td>15 minutes ago</td>
+                                <td>192.168.1.104</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // User Trend Chart
+    const userTrendCtx = document.getElementById('userTrendChart').getContext('2d');
+    const userTrendChart = new Chart(userTrendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+            datasets: [{
+                label: 'New Users',
+                data: [45, 52, 48, 61, 55, 67, 72, 68, 75, 82, 95],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // User Role Chart
+    const userRoleCtx = document.getElementById('userRoleChart').getContext('2d');
+    const userRoleChart = new Chart(userRoleCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Students', 'Guides', 'Companies', 'Admins'],
+            datasets: [{
+                data: [
+                    parseInt("{{ students_count|default:0 }}"),
+                    parseInt("{{ guides_count|default:0 }}"),
+                    parseInt("{{ companies_count|default:0 }}"),
+                    parseInt("{{ admins_count|default:0 }}")
+                ],
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Career Path Chart
+    const careerPathCtx = document.getElementById('careerPathChart').getContext('2d');
+    const careerPathChart = new Chart(careerPathCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Software Eng', 'Data Science', 'Digital Mark', 'Finance', 'Healthcare'],
+            datasets: [{
+                label: 'Interest Count',
+                data: [320, 210, 180, 150, 98],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Course Engagement Chart
+    const courseEngagementCtx = document.getElementById('courseEngagementChart').getContext('2d');
+    const courseEngagementChart = new Chart(courseEngagementCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Python', 'Data Science', 'Web Dev', 'AI/ML', 'Cybersecurity'],
+            datasets: [{
+                label: 'Completion Rate',
+                data: [85, 78, 92, 65, 70],
+                fill: true,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgb(255, 99, 132)',
+                pointBackgroundColor: 'rgb(255, 99, 132)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(255, 99, 132)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+{% endblock %}

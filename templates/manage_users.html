@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Block Users - BridgeIT Admin Panel{% endblock %}
+
+{% block header %}Block Users{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">User Management</h5>
+        <div>
+            <input type="text" class="form-control form-control-sm" placeholder="Search users..." style="width: 200px;">
+        </div>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-users-tab" data-bs-toggle="tab" data-bs-target="#all-users" type="button" role="tab">All Users</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="blocked-users-tab" data-bs-toggle="tab" data-bs-target="#blocked-users" type="button" role="tab">Blocked Users</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="userTabsContent">
+            <!-- All Users Tab -->
+            <div class="tab-pane fade show active" id="all-users" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Registration Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in all_users %}
+                            <tr>
+                                <td>#{{ user.id }}</td>
+                                <td>{{ user.user.get_full_name|default:user.user.username }}</td>
+                                <td>{{ user.user.email }}</td>
+                                <td>{{ user.role|title }}</td>
+                                <td>{{ user.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if user.is_blocked %}
+                                        <span class="badge bg-danger">Blocked</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_blocked %}
+                                        <button class="btn btn-sm btn-outline-success" onclick="unblockUser('{{ user.id }}')">
+                                            <i class="bi bi-person-check"></i> Unblock
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-outline-danger" onclick="blockUser('{{ user.id }}')">
+                                            <i class="bi bi-person-x"></i> Block
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No users found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Blocked Users Tab -->
+            <div class="tab-pane fade" id="blocked-users" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Blocked Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in blocked_users %}
+                            <tr>
+                                <td>#{{ user.id }}</td>
+                                <td>{{ user.user.get_full_name|default:user.user.username }}</td>
+                                <td>{{ user.user.email }}</td>
+                                <td>{{ user.role|title }}</td>
+                                <td>{{ user.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-success" onclick="unblockUser('{{ user.id }}')">
+                                        <i class="bi bi-person-check"></i> Unblock
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No blocked users</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function blockUser(userId) {
+        if (confirm('Are you sure you want to block this user?')) {
+            // In a real application, this would make an AJAX call to block the user
+            alert('User blocked successfully!');
+            // In a real application, you would update the UI to reflect the change
+        }
+    }
+
+    function unblockUser(userId) {
+        if (confirm('Are you sure you want to unblock this user?')) {
+            // In a real application, this would make an AJAX call to unblock the user
+            alert('User unblocked successfully!');
+            // In a real application, you would update the UI to reflect the change
+        }
+    }
+</script>
+{% endblock %}
