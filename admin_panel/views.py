@@ -212,8 +212,8 @@ def register_guide(request):
             last_name=last_name
         )
         
-        # Create guide profile in CustomUser
-        guide_profile = CustomUser.objects.create(
+        # Create guide role profile in RoleUser
+        guide_role = CustomUser.objects.create(
             user=user,
             role='guide',
             is_approved=False,  # Pending approval
@@ -293,14 +293,19 @@ def register_company(request):
         # Also create a CompanyProfile for additional details
         try:
             from company.models import CompanyProfile
+            
+            # Handle empty numeric fields
+            established_year = int(established) if established and established.strip() else None
+            employee_count_int = int(employee_count) if employee_count and employee_count.strip() else None
+            
             CompanyProfile.objects.create(
                 user=user,
                 company_name=company_name,
                 description=description,
                 website=website,
                 industry=industry,
-                established=established,
-                employee_count=employee_count,
+                established=established_year,
+                employee_count=employee_count_int,
                 location=location,
                 contact_email=email,
                 contact_phone=phone
@@ -308,6 +313,9 @@ def register_company(request):
         except ImportError:
             # If CompanyProfile model doesn't exist, continue without it
             pass
+        except ValueError as e:
+            # If there's a value error with numeric fields, log it but continue
+            messages.warning(request, 'Some optional fields were not saved due to invalid format.')
         
         messages.success(request, 'Your company registration has been submitted successfully. Our team will review it within 3-5 business days.')
         return redirect('register_company')
