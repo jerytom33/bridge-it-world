@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib import messages
-from bridge_core.models import Course, Exam
+from courses.models import Course
+from exams.models import Exam
 from admin_panel.models import RoleUser as CustomUser
 from admin_panel.decorators import admin_required
 
@@ -112,8 +114,15 @@ def reject_company(request, company_id):
             messages.error(request, f'Error rejecting company: {str(e)}')
     return redirect('manage_guides_companies')
 
+def admin_logout(request):
+    """Admin logout view"""
+    logout(request)
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect('home')
+
 @admin_required
 def manage_exams(request):
+    """View and manage exams (view/delete only)"""
     # Get all exams
     exams = Exam.objects.all()
     
@@ -123,7 +132,24 @@ def manage_exams(request):
     return render(request, 'manage_exams.html', context)
 
 @admin_required
+def delete_exam(request, exam_id):
+    """Delete an exam"""
+    if request.method == 'POST':
+        try:
+            exam = Exam.objects.get(id=exam_id)
+            exam_title = exam.title
+            exam.delete()
+            messages.success(request, f'Exam "{exam_title}" has been deleted successfully!')
+        except Exam.DoesNotExist:
+            messages.error(request, 'Exam not found.')
+        except Exception as e:
+            messages.error(request, f'Error deleting exam: {str(e)}')
+    
+    return redirect('admin_manage_exams')
+
+@admin_required
 def manage_courses(request):
+    """View and manage courses (view/delete only)"""
     # Get all courses
     courses = Course.objects.all()
     
@@ -131,6 +157,22 @@ def manage_courses(request):
         'courses': courses,
     }
     return render(request, 'manage_courses.html', context)
+
+@admin_required
+def delete_course(request, course_id):
+    """Delete a course"""
+    if request.method == 'POST':
+        try:
+            course = Course.objects.get(id=course_id)
+            course_title = course.title
+            course.delete()
+            messages.success(request, f'Course "{course_title}" has been deleted successfully!')
+        except Course.DoesNotExist:
+            messages.error(request, 'Course not found.')
+        except Exception as e:
+            messages.error(request, f'Error deleting course: {str(e)}')
+    
+    return redirect('admin_manage_courses')
 
 @admin_required
 def manage_users(request):
