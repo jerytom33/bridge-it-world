@@ -1,18 +1,59 @@
 import google.generativeai as genai
 import os
+import logging
+import json
+
+logger = logging.getLogger(__name__)
 
 def call_gemini_api(prompt):
     """
-    Reusable function to call Gemini API
+    Reusable function to call Gemini API with error handling
     """
-    # Configure Gemini API key (should be set in environment variables)
-    api_key = os.environ.get('GEMINI_API_KEY', 'your_gemini_api_key_here')
-    genai.configure(api_key=api_key)
+    try:
+        # Configure Gemini API key  
+        api_key = os.environ.get('GEMINI_API_KEY', 'AIzaSyBgEeP12TDO3L0nwKx3ZZPlZ-qskEMgKkg')
+        genai.configure(api_key=api_key)
+        
+        # Try multiple model names in order of preference
+        models_to_try = [
+            'gemini-1.5-pro-latest',
+            'gemini-1.5-flash-latest',
+            'models/gemini-1.5-pro',
+            'models/gemini-pro'
+        ]
+        
+        last_error = None
+        for model_name in models_to_try:
+            try:
+                # Create the model
+                model = genai.GenerativeModel(model_name)
+                
+                # Generate content
+                response = model.generate_content(prompt)
+                
+                logger.info(f"Successfully used model: {model_name}")
+                return response.text
+            
+            except Exception as e:
+                last_error = e
+                logger.warning(f"Model {model_name} failed: {str(e)}")
+                continue
+        
+        # If all models failed, raise the last error
+        raise last_error if last_error else Exception("All model attempts failed")
     
-    # Create the model
-    model = genai.GenerativeModel('gemini-pro')
-    
-    # Generate content
-    response = model.generate_content(prompt)
-    
-    return response.text
+    except Exception as e:
+        # Log the error for debugging
+        logger.error(f"Gemini API Error: {str(e)}")
+        
+        # Return a JSON error response instead of dict
+        error_response = {
+            "error": "AI service temporarily unavailable",
+            "details": str(e),
+            "suitable_career_paths": ["Unable to analyze at this time"],
+            "skill_gaps": [],
+            "recommended_courses": [],
+            "suggested_next_steps": ["Please try again later"],
+            "overall_summary": "Analysis unavailable due to AI service error"
+        }
+        return json.dumps(error_response)
