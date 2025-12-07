@@ -1,0 +1,16 @@
+# Resume Analyzer Module - Requirements
+
+# Core dependencies for resume parsing and analysis
+pyresparser==1.0.6
+pdfminer3==2018.12.3.0
+
+# NLP and text processing
+spacy==2.3.5
+nltk==3.7
+
+# Required by pyresparser
+docx2txt==0.8
+pdfminer.six==20220524
+
+# Text processing utilities
+regex==2022.8.17

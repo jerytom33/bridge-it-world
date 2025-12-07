@@ -20,7 +20,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # Deployment support (Render, etc.)
 # On Render, you can set ALLOWED_HOSTS to the external hostname or '*'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,10.0.2.2,0.0.0.0,192.168.220.3').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,10.0.2.2,0.0.0.0,192.168.220.3,192.168.29.174').split(',')
 
 # Application definition
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'guide',
     'resume',
     'users',
+    'student_gateway',
 ]
 
 MIDDLEWARE = [

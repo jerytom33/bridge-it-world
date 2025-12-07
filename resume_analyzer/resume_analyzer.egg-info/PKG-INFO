@@ -1,0 +1,368 @@
+Metadata-Version: 2.4
+Name: resume_analyzer
+Version: 1.0.0
+Summary: A standalone Python module for analyzing resumes and providing recommendations
+Home-page: 
+Author: Extracted from AI-Resume-Analyzer
+Author-email: 
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python ::3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: pyresparser==1.0.6
+Requires-Dist: pdfminer3==2018.12.3.0
+Requires-Dist: spacy==2.3.5
+Requires-Dist: nltk==3.7
+Requires-Dist: docx2txt==0.8
+Requires-Dist: pdfminer.six==20220524
+Requires-Dist: regex==2022.8.17
+Dynamic: author
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# Resume Analyzer Module
+
+A standalone Python module for analyzing resumes, extracting information, and providing recommendations.
+
+## Features
+
+- **Resume Parsing**: Extracts name, email, phone, skills, education, and experience from PDF resumes
+- **Candidate Level Detection**: Automatically categorizes candidates as Fresher, Intermediate, or Experienced
+- **Field Prediction**: Predicts career field based on skills (Data Science, Web Development, Android, iOS, UI/UX)
+- **Skills Recommendation**: Suggests relevant skills to add based on the predicted field
+- **Resume Scoring**: Scores resumes 0-100 with detailed feedback on what sections are missing
+- **Course Recommendations**: Suggests relevant online courses based on career field
+
+## Installation
+
+### Prerequisites
+
+- Python 3.7+
+- pip
+
+### Install Dependencies
+
+```bash
+cd resume_analyzer
+pip install -r requirements.txt
+```
+
+### Download spaCy Model
+
+The module requires the spaCy English language model:
+
+```bash
+python -m spacy download en_core_web_sm
+```
+
+### Download NLTK Data
+
+```bash
+python -c "import nltk; nltk.download('stopwords')"
+```
+
+## Quick Start
+
+### Basic Usage
+
+```python
+from resume_analyzer import analyze_resume
+
+# Analyze a resume
+result = analyze_resume('path/to/resume.pdf')
+
+# Access the results
+print(f"Candidate: {result['basic_details']['name']}")
+print(f"Email: {result['basic_details']['email']}")
+print(f"Experience Level: {result['candidate_level']}")
+print(f"Predicted Field: {result['predicted_field']}")
+print(f"Resume Score: {result['resume_score']}/100")
+print(f"Skills: {result['basic_details']['skills']}")
+print(f"Recommended Skills: {result['recommended_skills']}")
+```
+
+### Example Output
+
+```python
+{
+    "basic_details": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "mobile_number": "+1234567890",
+        "skills": ["Python", "Django", "React", "JavaScript"],
+        "education": ["B.S. Computer Science"],
+        "experience": ["Software Developer at XYZ Corp"],
+        "no_of_pages": 2,
+        "total_experience": 3.5
+    },
+    "candidate_level": "Experienced",
+    "predicted_field": "Web Development",
+    "recommended_skills": [
+        "React", "Django", "Node JS", "React JS", "php", 
+        "laravel", "Magento", "wordpress", "Javascript", 
+        "Angular JS", "c#", "Flask", "SDK"
+    ],
+    "recommended_courses": [
+        {
+            "name": "Django Crash course [Free]",
+            "link": "https://youtu.be/e1IyzVyrLSU"
+        },
+        {
+            "name": "Full Stack Web Developer by Udacity",
+            "link": "https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd0044"
+        }
+        // ... more courses
+    ],
+    "resume_score": 78,
+    "score_breakdown": [
+        "[+] Added Objective/Summary",
+        "[+] Added Education Details",
+        "[+] Added Experience",
+        "[-] Missing Internships",
+        "[+] Added Skills",
+        "[-] Missing Hobbies",
+        "[-] Missing Interests",
+        "[+] Added Achievements",
+        "[+] Added Certifications",
+        "[+] Added Projects"
+    ]
+}
+```
+
+## Django Integration
+
+### models.py
+
+```python
+from django.db import models
+
+class Resume(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    resume_file = models.FileField(upload_to='resumes/')
+    
+    # Analysis results
+    candidate_level = models.CharField(max_length=50, blank=True)
+    predicted_field = models.CharField(max_length=100, blank=True)
+    resume_score = models.IntegerField(default=0)
+    skills = models.JSONField(default=list, blank=True)
+    recommended_skills = models.JSONField(default=list, blank=True)
+    analysis_data = models.JSONField(default=dict, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.email}"
+```
+
+### views.py
+
+```python
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from resume_analyzer import analyze_resume
+import os
+
+def upload_resume(request):
+    if request.method == 'POST' and request.FILES.get('resume'):
+        resume_file = request.FILES['resume']
+        
+        # Save the uploaded file temporarily
+        temp_path = f'/tmp/{resume_file.name}'
+        with open(temp_path, 'wb+') as destination:
+            for chunk in resume_file.chunks():
+                destination.write(chunk)
+        
+        try:
+            # Analyze the resume
+            result = analyze_resume(temp_path)
+            
+            # Save to database
+            from .models import Resume
+            resume = Resume.objects.create(
+                name=result['basic_details'].get('name', 'Unknown'),
+                email=result['basic_details'].get('email', ''),
+                resume_file=resume_file,
+                candidate_level=result['candidate_level'],
+                predicted_field=result['predicted_field'],
+                resume_score=result['resume_score'],
+                skills=result['basic_details'].get('skills', []),
+                recommended_skills=result['recommended_skills'],
+                analysis_data=result
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'result': result,
+                'resume_id': resume.id
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+        
+        finally:
+            # Clean up temp file
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+    
+    return render(request, 'upload_resume.html')
+```
+
+### urls.py
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('upload/', views.upload_resume, name='upload_resume'),
+]
+```
+
+## API Reference
+
+### `analyze_resume(file_path)`
+
+Main function to analyze a resume.
+
+**Parameters:**
+- `file_path` (str): Absolute path to the PDF resume file
+
+**Returns:** 
+- `dict`: Analysis results containing:
+  - `basic_details` (dict): Extracted personal information
+    - `name` (str): Candidate's name
+    - `email` (str): Email address
+    - `mobile_number` (str): Phone number
+    - `skills` (list): List of detected skills
+    - `education` (list): Education details
+    - `experience` (list): Work experience
+    - `no_of_pages` (int): Number of pages in resume
+    - `total_experience` (float): Years of experience
+  - `candidate_level` (str): "Fresher", "Intermediate", or "Experienced"
+  - `predicted_field` (str): Predicted career field or "NA"
+  - `recommended_skills` (list): Skills to add
+  - `recommended_courses` (list): Course recommendations with name and link
+  - `resume_score` (int): Score from 0-100
+  - `score_breakdown` (list): Feedback on resume sections
+
+**Raises:**
+- `FileNotFoundError`: If the file doesn't exist
+- `Exception`: If resume parsing fails
+
+**Example:**
+
+```python
+from resume_analyzer import analyze_resume
+
+try:
+    result = analyze_resume('/path/to/resume.pdf')
+    print(f"Score: {result['resume_score']}")
+except FileNotFoundError:
+    print("Resume file not found")
+except Exception as e:
+    print(f"Analysis failed: {e}")
+```
+
+## Configuration
+
+You can customize the analysis by modifying `resume_analyzer/config.py`:
+
+- **Field keywords**: Add or modify keywords for field detection
+- **Scoring weights**: Adjust points for different resume sections
+- **Course count**: Change the number of recommended courses (default: 5)
+
+## Supported Resume Fields
+
+The analyzer looks for these sections in resumes:
+
+1. **Objective/Summary** (6 points)
+2. **Education** (12 points)
+3. **Experience** (16 points)
+4. **Internships** (6 points)
+5. **Skills** (7 points)
+6. **Hobbies** (4 points)
+7. **Interests** (5 points)
+8. **Achievements** (13 points)
+9. **Certifications** (12 points)
+10. **Projects** (19 points)
+
+**Maximum Score:** 100 points
+
+## Supported Career Fields
+
+- Data Science
+- Web Development
+- Android Development
+- iOS Development
+- UI/UX Development
+
+## Troubleshooting
+
+### PyResParser Issues
+
+If you encounter errors with `pyresparser`, ensure you're using compatible versions:
+
+```bash
+pip install spacy==2.3.5
+python -m spacy download en_core_web_sm
+```
+
+### PDF Parsing Errors
+
+Make sure the PDF is not password-protected and contains extractable text (not scanned images).
+
+### Import Errors
+
+Ensure all dependencies are installed:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Dependencies
+
+- **pyresparser**: Resume parsing
+- **pdfminer3**: PDF text extraction
+- **spacy**: Natural language processing
+- **nltk**: Text processing
+- **docx2txt**: DOCX support (via pyresparser)
+
+## Limitations
+
+1. Only supports PDF resumes (pyresparser also supports DOCX)
+2. Requires resumes to have extractable text (not scanned images)
+3. Field prediction limited to 5 tech domains
+4. English language only
+5. Depends on pyresparser which has spaCy version constraints
+
+## Examples
+
+See the `examples/` directory for more usage examples:
+
+- `basic_usage.py`: Simple standalone usage
+- `django_integration.py`: Complete Django integration example
+- `batch_processing.py`: Process multiple resumes at once
+
+## License
+
+This module is extracted from the AI-Resume-Analyzer project. Please refer to the original project's license.
+
+## Credits
+
+Based on the [AI-Resume-Analyzer](https://github.com/dnoobnerd/AI-Resume-Analyzer) project by Deepak Padhi.

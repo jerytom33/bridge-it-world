@@ -1,0 +1,83 @@
+{
+  "basic_details": {
+    "name": "Deepak Padhi",
+    "email": "dnoobnerd@gmail.com",
+    "mobile_number": "8123456790",
+    "skills": [
+      "Github",
+      "Css",
+      "Python",
+      "Engineering",
+      "Controls",
+      "Html",
+      "Javascript",
+      "Policies",
+      "Website",
+      "Sql",
+      "Analysis",
+      "Database",
+      "C",
+      "Analyze",
+      "System"
+    ],
+    "college_name": null,
+    "degree": null,
+    "designation": null,
+    "experience": null,
+    "company_names": null,
+    "no_of_pages": 2,
+    "total_experience": 0
+  },
+  "candidate_level": "Intermediate",
+  "predicted_field": "Web Development",
+  "recommended_skills": [
+    "React",
+    "Django",
+    "Node JS",
+    "React JS",
+    "php",
+    "laravel",
+    "Magento",
+    "wordpress",
+    "Javascript",
+    "Angular JS",
+    "c#",
+    "Flask",
+    "SDK"
+  ],
+  "recommended_courses": [
+    {
+      "name": "Django Crash course [Free]",
+      "link": "https://youtu.be/e1IyzVyrLSU"
+    },
+    {
+      "name": "Front End Web Developer by Udacity",
+      "link": "https://www.udacity.com/course/front-end-web-developer-nanodegree--nd0011"
+    },
+    {
+      "name": "ReactJS Project Development Training",
+      "link": "https://www.dotnettricks.com/training/masters-program/reactjs-certification-training"
+    },
+    {
+      "name": "Node.js and Express.js [Free]",
+      "link": "https://youtu.be/Oe421EPjeBE"
+    },
+    {
+      "name": "React Crash Course [Free]",
+      "link": "https://youtu.be/Dorf8i6lCuk"
+    }
+  ],
+  "resume_score": 60,
+  "score_breakdown": [
+    "[-] Missing Objective/Summary",
+    "[+] Added Education Details",
+    "[+] Added Experience",
+    "[+] Added Internships",
+    "[+] Added Skills",
+    "[-] Missing Hobbies",
+    "[-] Missing Interests",
+    "[-] Missing Achievements",
+    "[-] Missing Certifications",
+    "[+] Added Projects"
+  ]
+}
