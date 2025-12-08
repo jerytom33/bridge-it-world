@@ -4,6 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.core.files.base import ContentFile
 from django.conf import settings
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 import json
 import PyPDF2
 import io
@@ -43,7 +46,7 @@ class ResumeUploadView(APIView):
             )
         
         try:
-            # Extract text from PDF for Gemini
+            # Extract text from PDF
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             text = ""
             for page in pdf_reader.pages:
@@ -124,3 +127,83 @@ class ResumeHistoryView(generics.ListAPIView):
     
     def get_queryset(self):
         return ResumeAnalysis.objects.filter(user=self.request.user)
+
+
+# Web-based test page (no authentication required for testing)
+def resume_analyzer_test(request):
+    """
+    Resume analyzer test page - accessible at /resume/test/
+    Upload PDF and see analysis results
+    """
+    context = {
+        'analysis': None,
+        'error': None
+    }
+    
+    if request.method == 'POST' and request.FILES.get('pdf_file'):
+        try:
+            pdf_file = request.FILES['pdf_file']
+            
+            # Validate PDF
+            if not pdf_file.name.endswith('.pdf'):
+                context['error'] = 'Only PDF files are allowed'
+                return render(request, 'resume/analyzer_test.html', context)
+            
+            # Analyze with simplified resume analyzer
+            analyzer_result = analyze_resume_simple(pdf_file)
+            
+            # Extract text for Gemini API
+            pdf_file.seek(0)
+            pdf_reader = PyPDF2.PdfReader(pdf_file)
+            text = ""
+            for page in pdf_reader.pages:
+                text += page.extract_text()
+            
+            # Call Gemini API for career guidance
+            prompt = f"""You are a senior career counselor. Analyze this resume and return strict JSON with keys: 
+suitable_career_paths (list of strings), skill_gaps (list), recommended_courses (list), suggested_next_steps (list), overall_summary (string)
+
+Resume text:
+{text}"""
+            
+            gemini_response_text = call_gemini_api(prompt)
+            
+            # Parse Gemini response
+            gemini_data = {}
+            if isinstance(gemini_response_text, dict):
+                gemini_data = gemini_response_text
+            else:
+                try:
+                    gemini_data = json.loads(gemini_response_text)
+                except json.JSONDecodeError:
+                    gemini_data = {
+                        "suitable_career_paths": [],
+                        "skill_gaps": [],
+                        "recommended_courses": [],
+                        "suggested_next_steps": [],
+                        "overall_summary": ""
+                    }
+            
+            # Prepare context with results
+            context['analysis'] = {
+                'candidate_name': analyzer_result['basic_details'].get('name', 'Not detected'),
+                'candidate_email': analyzer_result['basic_details'].get('email', ''),
+                'candidate_phone': analyzer_result['basic_details'].get('mobile_number', ''),
+                'candidate_level': analyzer_result['candidate_level'],
+                'predicted_field': analyzer_result['predicted_field'],
+                'resume_score': analyzer_result['resume_score'],
+                'detected_skills': analyzer_result['basic_details'].get('skills', []),
+                'recommended_skills': analyzer_result['recommended_skills'],
+                'recommended_courses': analyzer_result['recommended_courses'],
+                'score_breakdown': analyzer_result['score_breakdown'],
+                # Gemini AI results
+                'gemini_summary': gemini_data.get('overall_summary', ''),
+                'career_paths': gemini_data.get('suitable_career_paths', []),
+                'skill_gaps': gemini_data.get('skill_gaps', []),
+                'next_steps': gemini_data.get('suggested_next_steps', []),
+            }
+            
+        except Exception as e:
+            context['error'] = f'Failed to analyze resume: {str(e)}'
+    
+    return render(request, 'resume/analyzer_test.html', context)
