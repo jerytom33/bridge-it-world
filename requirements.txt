@@ -26,11 +26,11 @@ gunicorn==23.0.0
 # Environment Variables (for local development)
 python-dotenv==1.0.1
 
-# Resume Analyzer Module Dependencies
-pyresparser==1.0.6
-pdfminer3==2018.12.3.0
-spacy==2.3.5
-nltk==3.7
+# Resume Analyzer Module Dependencies (Python 3.11 Compatible)
+# Note: pyresparser is incompatible with Python 3.11, using alternatives
+spacy==3.7.6
+nltk==3.9.1
 docx2txt==0.8
-pdfminer.six==20220524
-regex==2022.8.17
+pdfplumber==0.11.4
+python-docx==1.1.2
+pdfminer.six==20231228
