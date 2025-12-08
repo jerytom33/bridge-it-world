@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib import messages
-from bridge_core.models import Course, Exam
+from courses.models import Course
+from exams.models import Exam
 from admin_panel.models import RoleUser as CustomUser
 from admin_panel.decorators import admin_required
 
@@ -53,9 +55,20 @@ def approve_guide(request, guide_id):
     """Approve a guide application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             guide = CustomUser.objects.get(id=guide_id, role='guide')
             guide.is_approved = True
             guide.save()
+            
+            # Create notification for guide
+            create_notification(
+                recipient=guide.user,
+                notification_type='guide_approved',
+                title='Guide Application Approved',
+                message='Congratulations! Your guide application has been approved. You can now access all guide features.'
+            )
+            
             messages.success(request, f'Guide {guide.user.username} has been approved successfully.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Guide not found.')
@@ -68,7 +81,18 @@ def reject_guide(request, guide_id):
     """Reject a guide application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             guide = CustomUser.objects.get(id=guide_id, role='guide')
+            
+            # Create notification before deletion
+            create_notification(
+                recipient=guide.user,
+                notification_type='guide_rejected',
+                title='Guide Application Rejected',
+                message='We regret to inform you that your guide application has not been approved at this time.'
+            )
+            
             # Delete the user account
             user = guide.user
             guide.delete()
@@ -85,9 +109,20 @@ def approve_company(request, company_id):
     """Approve a company application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             company = CustomUser.objects.get(id=company_id, role='company')
             company.is_approved = True
             company.save()
+            
+            # Create notification for company
+            create_notification(
+                recipient=company.user,
+                notification_type='company_approved',
+                title='Company Application Approved',
+                message='Congratulations! Your company registration has been approved. You can now post jobs and access all company features.'
+            )
+            
             messages.success(request, f'Company {company.user.username} has been approved successfully.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Company not found.')
@@ -100,7 +135,18 @@ def reject_company(request, company_id):
     """Reject a company application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             company = CustomUser.objects.get(id=company_id, role='company')
+            
+            # Create notification before deletion
+            create_notification(
+                recipient=company.user,
+                notification_type='company_rejected',
+                title='Company Application Rejected',
+                message='We regret to inform you that your company registration has not been approved at this time.'
+            )
+            
             # Delete the user account
             user = company.user
             company.delete()
@@ -112,8 +158,15 @@ def reject_company(request, company_id):
             messages.error(request, f'Error rejecting company: {str(e)}')
     return redirect('manage_guides_companies')
 
+def admin_logout(request):
+    """Admin logout view"""
+    logout(request)
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect('home')
+
 @admin_required
 def manage_exams(request):
+    """View and manage exams (view/delete only)"""
     # Get all exams
     exams = Exam.objects.all()
     
@@ -123,7 +176,24 @@ def manage_exams(request):
     return render(request, 'manage_exams.html', context)
 
 @admin_required
+def delete_exam(request, exam_id):
+    """Delete an exam"""
+    if request.method == 'POST':
+        try:
+            exam = Exam.objects.get(id=exam_id)
+            exam_title = exam.title
+            exam.delete()
+            messages.success(request, f'Exam "{exam_title}" has been deleted successfully!')
+        except Exam.DoesNotExist:
+            messages.error(request, 'Exam not found.')
+        except Exception as e:
+            messages.error(request, f'Error deleting exam: {str(e)}')
+    
+    return redirect('admin_manage_exams')
+
+@admin_required
 def manage_courses(request):
+    """View and manage courses (view/delete only)"""
     # Get all courses
     courses = Course.objects.all()
     
@@ -131,6 +201,22 @@ def manage_courses(request):
         'courses': courses,
     }
     return render(request, 'manage_courses.html', context)
+
+@admin_required
+def delete_course(request, course_id):
+    """Delete a course"""
+    if request.method == 'POST':
+        try:
+            course = Course.objects.get(id=course_id)
+            course_title = course.title
+            course.delete()
+            messages.success(request, f'Course "{course_title}" has been deleted successfully!')
+        except Course.DoesNotExist:
+            messages.error(request, 'Course not found.')
+        except Exception as e:
+            messages.error(request, f'Error deleting course: {str(e)}')
+    
+    return redirect('admin_manage_courses')
 
 @admin_required
 def manage_users(request):
@@ -212,8 +298,8 @@ def register_guide(request):
             last_name=last_name
         )
         
-        # Create guide profile in CustomUser
-        guide_profile = CustomUser.objects.create(
+        # Create guide role profile in RoleUser
+        guide_role = CustomUser.objects.create(
             user=user,
             role='guide',
             is_approved=False,  # Pending approval
@@ -235,6 +321,15 @@ def register_guide(request):
         except ImportError:
             # If GuideProfile model doesn't exist, continue without it
             pass
+        
+        # Notify all admins about new guide registration
+        from core.utils import notify_all_admins
+        notify_all_admins(
+            notification_type='guide_registration',
+            title='New Guide Registration',
+            message=f'{first_name} {last_name} has registered as a guide and is pending approval.',
+            related_user=user
+        )
         
         messages.success(request, 'Your application has been submitted successfully. Our team will review it within 3-5 business days.')
         return redirect('register_guide')
@@ -293,14 +388,19 @@ def register_company(request):
         # Also create a CompanyProfile for additional details
         try:
             from company.models import CompanyProfile
+            
+            # Handle empty numeric fields
+            established_year = int(established) if established and established.strip() else None
+            employee_count_int = int(employee_count) if employee_count and employee_count.strip() else None
+            
             CompanyProfile.objects.create(
                 user=user,
                 company_name=company_name,
                 description=description,
                 website=website,
                 industry=industry,
-                established=established,
-                employee_count=employee_count,
+                established=established_year,
+                employee_count=employee_count_int,
                 location=location,
                 contact_email=email,
                 contact_phone=phone
@@ -308,6 +408,18 @@ def register_company(request):
         except ImportError:
             # If CompanyProfile model doesn't exist, continue without it
             pass
+        except ValueError as e:
+            # If there's a value error with numeric fields, log it but continue
+            messages.warning(request, 'Some optional fields were not saved due to invalid format.')
+        
+        # Notify all admins about new company registration
+        from core.utils import notify_all_admins
+        notify_all_admins(
+            notification_type='company_registration',
+            title='New Company Registration',
+            message=f'{company_name} has registered and is pending approval.',
+            related_user=user
+        )
         
         messages.success(request, 'Your company registration has been submitted successfully. Our team will review it within 3-5 business days.')
         return redirect('register_company')

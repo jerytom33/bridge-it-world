@@ -55,6 +55,26 @@ class LikePostView(APIView):
             # Increment the likes count
             post.likes_count += 1
             post.save()
+            
+            # Notify post author if they are a company
+            try:
+                from admin_panel.models import RoleUser
+                from core.utils import create_notification
+                
+                author_role = RoleUser.objects.filter(user=post.author, role='company').first()
+                if author_role:
+                    create_notification(
+                        recipient=post.author,
+                        notification_type='post_liked',
+                        title='Someone Liked Your Post',
+                        message=f'{request.user.get_full_name() or request.user.username} liked your post.',
+                        related_user=request.user,
+                        related_post_id=post.id
+                    )
+            except Exception as e:
+                # Continue even if notification fails
+                pass
+            
             return Response({
                 'message': 'Post liked successfully',
                 'is_liked': True,
@@ -86,6 +106,26 @@ class SavePostView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             # User saved the post
+            
+            # Notify post author if they are a company
+            try:
+                from admin_panel.models import RoleUser
+                from core.utils import create_notification
+                
+                author_role = RoleUser.objects.filter(user=post.author, role='company').first()
+                if author_role:
+                    create_notification(
+                        recipient=post.author,
+                        notification_type='post_saved',
+                        title='Someone Saved Your Post',
+                        message=f'{request.user.get_full_name() or request.user.username} saved your post.',
+                        related_user=request.user,
+                        related_post_id=post.id
+                    )
+            except Exception as e:
+                # Continue even if notification fails
+                pass
+            
             return Response({
                 'message': 'Post saved successfully',
                 'is_saved': True

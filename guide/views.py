@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import GuideProfile, GuideExam, GuideCourse
-from bridge_core.models import UserProfile
+from admin_panel.models import RoleUser  # Changed from RoleUser to RoleUser
 from exams.models import Exam
 from courses.models import Course
 from feed.models import Post
@@ -13,7 +13,7 @@ from feed.models import Post
 def guide_dashboard(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -49,7 +49,7 @@ def guide_dashboard(request):
 def update_guide_profile(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -89,7 +89,7 @@ def update_guide_profile(request):
 def manage_exams(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -114,7 +114,7 @@ def manage_exams(request):
 def add_exam(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -155,7 +155,7 @@ def add_exam(request):
 def edit_exam(request, exam_id):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -193,7 +193,7 @@ def edit_exam(request, exam_id):
 def delete_exam(request, exam_id):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -224,7 +224,7 @@ def delete_exam(request, exam_id):
 def manage_courses(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -249,7 +249,7 @@ def manage_courses(request):
 def add_course(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -291,7 +291,7 @@ def add_course(request):
 def edit_course(request, course_id):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -330,7 +330,7 @@ def edit_course(request, course_id):
 def delete_course(request, course_id):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -361,7 +361,7 @@ def delete_course(request, course_id):
 def create_post(request):
     # Check if user is a guide
     try:
-        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile = get_object_or_404(RoleUser, user=request.user)
         if user_profile.role != 'guide':
             messages.error(request, 'Access denied. Guide access only.')
             return redirect('admin_dashboard')
@@ -392,22 +392,43 @@ def create_post(request):
 def guide_login(request):
     """View for guide login"""
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        
+        if not username or not password:
+            messages.error(request, 'Please provide both username and password.')
+            return render(request, 'guide/login.html')
+        
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
             # Check if user is a guide
             try:
-                user_profile = UserProfile.objects.get(user=user)
-                if user_profile.role == 'guide':
-                    login(request, user)
-                    return redirect('guide_dashboard')
-                else:
-                    messages.error(request, 'Access denied. This account is not a guide account.')
-            except UserProfile.DoesNotExist:
-                messages.error(request, 'User profile not found.')
+                from admin_panel.models import RoleUser
+                user_profile = RoleUser.objects.get(user=user)
+                
+                if user_profile.role != 'guide':
+                    messages.error(request, f'Access denied. This account is registered as {user_profile.role}, not a guide.')
+                    return render(request, 'guide/login.html')
+                
+                if not user_profile.is_approved:
+                    messages.warning(request, 'Your guide account is pending admin approval. Please wait for approval.')
+                    return render(request, 'guide/login.html')
+                
+                # Everything is good, log them in
+                login(request, user)
+                messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
+                return redirect('guide_dashboard')
+                
+            except RoleUser.DoesNotExist:
+                messages.error(request, 'User profile not found. Please contact support.')
+                return render(request, 'guide/login.html')
+            except Exception as e:
+                messages.error(request, f'Login error: {str(e)}')
+                return render(request, 'guide/login.html')
         else:
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'guide/login.html')
+
+

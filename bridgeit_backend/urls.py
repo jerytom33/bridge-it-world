@@ -22,7 +22,8 @@ def home_view(request):
             "aptitude": "/api/aptitude/",
             "exams": "/api/exams/",
             "courses": "/api/courses/",
-            "feed": "/api/feed/"
+            "feed": "/api/feed/",
+            "student_gateway": "/api/student/"
         }
     })
 
@@ -32,6 +33,7 @@ urlpatterns = [
     path('api/core/', include('core.urls')),
     path('api/bridge/', include('bridge_core.urls')),
     path('api/auth/', include('users.urls')),  # Updated: User auth endpoints
+    path('api/student/', include('student_gateway.urls')), # Student Gateway
     path('admin-panel/', include('admin_panel.urls')),
     path('company/', include('company.urls')),
     path('guide/', include('guide.urls')),

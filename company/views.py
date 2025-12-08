@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import CompanyProfile, JobPosting
+from .models import CompanyProfile, JobPosting, CompanyExam, CompanyBootcamp
 from feed.models import Post
 from django.contrib.auth.models import User
 from admin_panel.models import RoleUser as UserProfile
@@ -80,20 +80,32 @@ def update_company_profile(request):
         company_profile = CompanyProfile(user=request.user)
     
     if request.method == 'POST':
+        # Get form values
+        established = request.POST.get('established', '')
+        employee_count = request.POST.get('employee_count', '')
+        
+        # Handle empty numeric fields
+        established_year = int(established) if established and established.strip() else company_profile.established
+        employee_count_val = employee_count.strip() if employee_count and employee_count.strip() else company_profile.employee_count
+        
         # Update company profile
         company_profile.company_name = request.POST.get('company_name', company_profile.company_name)
         company_profile.description = request.POST.get('description', company_profile.description)
         company_profile.website = request.POST.get('website', company_profile.website)
         company_profile.industry = request.POST.get('industry', company_profile.industry)
-        company_profile.established = request.POST.get('established', company_profile.established)
-        company_profile.employee_count = request.POST.get('employee_count', company_profile.employee_count)
+        company_profile.established = established_year
+        company_profile.employee_count = employee_count_val
         company_profile.location = request.POST.get('location', company_profile.location)
         company_profile.contact_email = request.POST.get('contact_email', company_profile.contact_email)
         company_profile.contact_phone = request.POST.get('contact_phone', company_profile.contact_phone)
-        company_profile.save()
-        messages.success(request, 'Company profile updated successfully!')
-        return redirect('company_dashboard')
-    
+        
+        try:
+            company_profile.save()
+            messages.success(request, 'Company profile updated successfully!')
+            return redirect('company_dashboard')
+        except ValueError as e:
+            messages.error(request, 'Invalid value for numeric fields. Please check your input.')
+            
     context = {
         'company_profile': company_profile,
     }
@@ -145,7 +157,7 @@ def create_job_posting(request):
         feed_post.save()
         
         messages.success(request, 'Job posting created successfully!')
-        return redirect('company_dashboard')
+        return redirect('view_job_postings')  # Redirect to My Jobs page
     
     return render(request, 'company/create_job.html')
 
@@ -215,6 +227,17 @@ def company_login(request):
                     if not user_profile.is_approved:
                         messages.error(request, 'Your company account is pending approval.')
                         return redirect('company_login')
+                    
+                    # Get or create company profile to ensure it exists
+                    company_profile, created = CompanyProfile.objects.get_or_create(
+                        user=user,
+                        defaults={
+                            'company_name': user.first_name or 'Company Name',
+                            'description': 'Company Description',
+                            'industry': 'Technology'
+                        }
+                    )
+                    
                     login(request, user)
                     return redirect('company_dashboard')
                 else:
@@ -225,6 +248,7 @@ def company_login(request):
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'company/login.html')
+
 
 
 @login_required
@@ -403,6 +427,9 @@ def create_company_bootcamp(request):
             messages.error(request, 'Please complete your company profile first.')
             return redirect('update_company_profile')
         
+        # Handle checkbox value (HTML sends "on" when checked, nothing when unchecked)
+        is_certified = request.POST.get('is_certified') == 'on'
+        
         # Create company bootcamp
         company_bootcamp = CompanyBootcamp(
             company=company_profile,
@@ -413,7 +440,7 @@ def create_company_bootcamp(request):
             duration=request.POST.get('duration'),
             price=request.POST.get('price', None),
             link=request.POST.get('link', ''),
-            is_certified=request.POST.get('is_certified', False),
+            is_certified=is_certified,
         )
         company_bootcamp.save()
         
@@ -452,6 +479,20 @@ def view_company_bootcamps(request):
 
 def company_logout(request):
     """View for company logout"""
+    # Notify admins about company logout
+    if request.user.is_authenticated:
+        try:
+            from core.utils import notify_all_admins
+            notify_all_admins(
+                notification_type='guide_logout',  # Using guide_logout type for companies too
+                title='Company Logged Out',
+                message=f'Company {request.user.get_full_name() or request.user.username} has logged out.',
+                related_user=request.user
+            )
+        except Exception:
+            pass  # Continue logout even if notification fails
+    
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('company_login')
+

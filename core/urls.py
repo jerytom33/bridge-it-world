@@ -17,4 +17,8 @@ urlpatterns = [
     # Student profile endpoints
     path('profile/setup/', views.ProfileAPI.as_view(), name='profile-setup'),
     path('profile/me/', views.ProfileAPI.as_view(), name='profile-me'),
+    # Notification endpoints
+    path('notifications/', views.NotificationListView.as_view(), name='notifications-list'),
+    path('notifications/<int:notification_id>/mark-read/', views.MarkNotificationReadView.as_view(), name='notification-mark-read'),
+    path('notifications/mark-all-read/', views.MarkAllNotificationsReadView.as_view(), name='notifications-mark-all-read'),
 ]

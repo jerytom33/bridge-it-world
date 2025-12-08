@@ -181,3 +181,51 @@ def signup_view(request):
         'token': str(refresh.access_token),
         'user_id': user.id,
     }, status=201)
+
+
+# Notification Views
+class NotificationListView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Get all notifications for the current user"""
+        from .models import Notification
+        from .serializers import NotificationSerializer
+        
+        notifications = Notification.objects.filter(recipient=request.user)
+        unread_count = notifications.filter(is_read=False).count()
+        
+        serializer = NotificationSerializer(notifications, many=True)
+        
+        return Response({
+            'notifications': serializer.data,
+            'unread_count': unread_count
+        })
+
+
+class MarkNotificationReadView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, notification_id):
+        """Mark a specific notification as read"""
+        from .models import Notification
+        
+        try:
+            notification = Notification.objects.get(id=notification_id, recipient=request.user)
+            notification.is_read = True
+            notification.save()
+            return Response({'success': True, 'message': 'Notification marked as read'})
+        except Notification.DoesNotExist:
+            return Response({'error': 'Notification not found'}, status=404)
+
+
+class MarkAllNotificationsReadView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        """Mark all notifications as read for the current user"""
+        from .models import Notification
+        
+        Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+        return Response({'success': True, 'message': 'All notifications marked as read'})
+
