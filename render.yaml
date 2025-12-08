@@ -33,22 +33,10 @@ services:
       - key: GEMINI_API_KEY
         sync: false
 
-  # PostgreSQL Database
-  - type: pserv
-    name: bridgeit-db
-    env: docker
-    plan: free
+databases:
+  # PostgreSQL Database (Managed Service)
+  - name: bridgeit-db
+    databaseName: bridgeit_db
+    user: bridgeit_user
     region: singapore
-    image:
-      url: postgres:15
-    disk:
-      name: bridgeit-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
-    envVars:
-      - key: POSTGRES_USER
-        value: bridgeit_user
-      - key: POSTGRES_PASSWORD
-        generateValue: true
-      - key: POSTGRES_DB
-        value: bridgeit_db
+    plan: free
