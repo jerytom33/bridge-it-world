@@ -42,3 +42,39 @@ class Exam(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)  # type: ignore
     created_at = models.DateTimeField(default=timezone.now)
+
+
+class Notification(models.Model):
+    """Notification model for system-wide notifications."""
+    
+    # Type annotation to help static analysis tools
+    objects = models.Manager()
+    
+    NOTIFICATION_TYPES = [
+        ('user_registration', 'User Registration'),
+        ('guide_registration', 'Guide Registration Pending'),
+        ('company_registration', 'Company Registration Pending'),
+        ('guide_approved', 'Guide Approved'),
+        ('guide_rejected', 'Guide Rejected'),
+        ('company_approved', 'Company Approved'),
+        ('company_rejected', 'Company Rejected'),
+        ('guide_logout', 'Guide Logged Out'),
+        ('post_liked', 'Post Liked'),
+        ('post_saved', 'Post Saved'),
+    ]
+    
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)  # type: ignore
+    related_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='related_notifications')
+    related_post_id = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        db_table = 'core_notification'
+    
+    def __str__(self):
+        return f"{self.recipient.username} - {self.title}"  # type: ignore

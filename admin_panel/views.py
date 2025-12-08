@@ -55,9 +55,20 @@ def approve_guide(request, guide_id):
     """Approve a guide application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             guide = CustomUser.objects.get(id=guide_id, role='guide')
             guide.is_approved = True
             guide.save()
+            
+            # Create notification for guide
+            create_notification(
+                recipient=guide.user,
+                notification_type='guide_approved',
+                title='Guide Application Approved',
+                message='Congratulations! Your guide application has been approved. You can now access all guide features.'
+            )
+            
             messages.success(request, f'Guide {guide.user.username} has been approved successfully.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Guide not found.')
@@ -70,7 +81,18 @@ def reject_guide(request, guide_id):
     """Reject a guide application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             guide = CustomUser.objects.get(id=guide_id, role='guide')
+            
+            # Create notification before deletion
+            create_notification(
+                recipient=guide.user,
+                notification_type='guide_rejected',
+                title='Guide Application Rejected',
+                message='We regret to inform you that your guide application has not been approved at this time.'
+            )
+            
             # Delete the user account
             user = guide.user
             guide.delete()
@@ -87,9 +109,20 @@ def approve_company(request, company_id):
     """Approve a company application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             company = CustomUser.objects.get(id=company_id, role='company')
             company.is_approved = True
             company.save()
+            
+            # Create notification for company
+            create_notification(
+                recipient=company.user,
+                notification_type='company_approved',
+                title='Company Application Approved',
+                message='Congratulations! Your company registration has been approved. You can now post jobs and access all company features.'
+            )
+            
             messages.success(request, f'Company {company.user.username} has been approved successfully.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Company not found.')
@@ -102,7 +135,18 @@ def reject_company(request, company_id):
     """Reject a company application"""
     if request.method == 'POST':
         try:
+            from core.utils import create_notification
+            
             company = CustomUser.objects.get(id=company_id, role='company')
+            
+            # Create notification before deletion
+            create_notification(
+                recipient=company.user,
+                notification_type='company_rejected',
+                title='Company Application Rejected',
+                message='We regret to inform you that your company registration has not been approved at this time.'
+            )
+            
             # Delete the user account
             user = company.user
             company.delete()
@@ -278,6 +322,15 @@ def register_guide(request):
             # If GuideProfile model doesn't exist, continue without it
             pass
         
+        # Notify all admins about new guide registration
+        from core.utils import notify_all_admins
+        notify_all_admins(
+            notification_type='guide_registration',
+            title='New Guide Registration',
+            message=f'{first_name} {last_name} has registered as a guide and is pending approval.',
+            related_user=user
+        )
+        
         messages.success(request, 'Your application has been submitted successfully. Our team will review it within 3-5 business days.')
         return redirect('register_guide')
     
@@ -358,6 +411,15 @@ def register_company(request):
         except ValueError as e:
             # If there's a value error with numeric fields, log it but continue
             messages.warning(request, 'Some optional fields were not saved due to invalid format.')
+        
+        # Notify all admins about new company registration
+        from core.utils import notify_all_admins
+        notify_all_admins(
+            notification_type='company_registration',
+            title='New Company Registration',
+            message=f'{company_name} has registered and is pending approval.',
+            related_user=user
+        )
         
         messages.success(request, 'Your company registration has been submitted successfully. Our team will review it within 3-5 business days.')
         return redirect('register_company')

@@ -227,6 +227,17 @@ def company_login(request):
                     if not user_profile.is_approved:
                         messages.error(request, 'Your company account is pending approval.')
                         return redirect('company_login')
+                    
+                    # Get or create company profile to ensure it exists
+                    company_profile, created = CompanyProfile.objects.get_or_create(
+                        user=user,
+                        defaults={
+                            'company_name': user.first_name or 'Company Name',
+                            'description': 'Company Description',
+                            'industry': 'Technology'
+                        }
+                    )
+                    
                     login(request, user)
                     return redirect('company_dashboard')
                 else:
@@ -237,6 +248,7 @@ def company_login(request):
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'company/login.html')
+
 
 
 @login_required
@@ -467,6 +479,20 @@ def view_company_bootcamps(request):
 
 def company_logout(request):
     """View for company logout"""
+    # Notify admins about company logout
+    if request.user.is_authenticated:
+        try:
+            from core.utils import notify_all_admins
+            notify_all_admins(
+                notification_type='guide_logout',  # Using guide_logout type for companies too
+                title='Company Logged Out',
+                message=f'Company {request.user.get_full_name() or request.user.username} has logged out.',
+                related_user=request.user
+            )
+        except Exception:
+            pass  # Continue logout even if notification fails
+    
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('company_login')
+
