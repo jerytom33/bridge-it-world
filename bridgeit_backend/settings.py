@@ -66,22 +66,22 @@ if DEBUG:
     # Development: Allow all origins
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    # Production: Only allow specific origins
-    CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
-    cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
-    if cors_origins:
-        CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',')]
-    else:
-        CORS_ALLOWED_ORIGINS = [
-            "http://localhost:5000",
-            "http://127.0.0.1:5000",
-            "http://10.0.2.2:8000",
-        ]
+    # Production: Check CORS_ALLOW_ALL_ORIGINS setting
+    cors_allow_all = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'False')
+    CORS_ALLOW_ALL_ORIGINS = cors_allow_all.lower() in ('true', '1', 'yes')
+    
+    if not CORS_ALLOW_ALL_ORIGINS:
+        # Only set CORS_ALLOWED_ORIGINS if not allowing all origins
+        cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+        if cors_origins:
+            CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
+        else:
+            CORS_ALLOWED_ORIGINS = []
 
 # CSRF Trusted Origins (for production)
 csrf_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
 if csrf_origins:
-    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',')]
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',') if origin.strip()]
 else:
     CSRF_TRUSTED_ORIGINS = []
 
@@ -194,10 +194,12 @@ LOGIN_REDIRECT_URL = '/admin-panel/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Static files
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+# Static files - only STATIC_ROOT needed for production
+# STATICFILES_DIRS is not needed when using collectstatic
+# Uncomment below if you have a local static directory
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+# ]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
