@@ -1,17 +1,54 @@
 services:
+  # Web Service
   - type: web
     name: bridgeit-backend
     env: python
+    region: singapore
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn bridgeit_backend.wsgi:application"
+    healthCheckPath: /
+    autoDeploy: true
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.0
+        value: 3.11.0
       - key: SECRET_KEY
         generateValue: true
-      - key: WEB_CONCURRENCY
-        value: 4
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "*" 
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bridgeit-db
+          property: connectionString
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CORS_ALLOW_ALL_ORIGINS
+        value: "False"
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # PostgreSQL Database
+  - type: pserv
+    name: bridgeit-db
+    env: docker
+    plan: free
+    region: singapore
+    image:
+      url: postgres:15
+    disk:
+      name: bridgeit-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
+    envVars:
+      - key: POSTGRES_USER
+        value: bridgeit_user
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: POSTGRES_DB
+        value: bridgeit_db

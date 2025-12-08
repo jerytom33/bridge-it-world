@@ -60,16 +60,30 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-# Allow Flutter app (emulator + real device)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5000",
-    "http://127.0.0.1:5000",
-    "http://10.0.2.2:8000",   # Android emulator
-    "http://192.168.x.x:8000", # Replace with your PC IP (for real phone)
-]
+# CORS Configuration
+# In production, set CORS_ALLOWED_ORIGINS environment variable
+if DEBUG:
+    # Development: Allow all origins
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # Production: Only allow specific origins
+    CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
+    cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+    if cors_origins:
+        CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',')]
+    else:
+        CORS_ALLOWED_ORIGINS = [
+            "http://localhost:5000",
+            "http://127.0.0.1:5000",
+            "http://10.0.2.2:8000",
+        ]
 
-# Or just allow all (for development only!)
-CORS_ALLOW_ALL_ORIGINS = True
+# CSRF Trusted Origins (for production)
+csrf_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',')]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
 ROOT_URLCONF = 'bridgeit_backend.urls'
 
@@ -97,11 +111,12 @@ WSGI_APPLICATION = 'bridgeit_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Database - Using Neon PostgreSQL
+# Database - PostgreSQL (from environment variable)
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_MpcX2JNbOS8h@ep-icy-term-a18q4npy-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
-        conn_max_age=600
+        default=os.environ.get('DATABASE_URL', 'postgresql://neondb_owner:npg_MpcX2JNbOS8h@ep-icy-term-a18q4npy-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'),
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -215,3 +230,16 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+# Security Settings for Production
+if not DEBUG:
+    # HTTPS/SSL Settings
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True') == 'True'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True

@@ -1,1 +1,52 @@
+# Environment Variables
 .env
+.env.local
+.env.*.local
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+/staticfiles_build/
+/static/
+/media/
+
+# Virtual Environments
+venv/
+env/
+ENV/
+bridge_env/
+venv_old/
+venv_py312/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build
+build/
+dist/
+*.egg-info/
