@@ -12,18 +12,18 @@
                 <h5 class="card-title mb-0">Course Information</h5>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="title" class="form-label">Course Title</label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="provider" class="form-label">Provider</label>
                         <input type="text" class="form-control" id="provider" name="provider" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="career_path" class="form-label">Career Path</label>
                         <select class="form-select" id="career_path" name="career_path" required>
@@ -34,27 +34,33 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="duration" class="form-label">Duration</label>
-                        <input type="text" class="form-control" id="duration" name="duration" placeholder="e.g., 6 months, 2 years" required>
+                        <input type="text" class="form-control" id="duration" name="duration"
+                            placeholder="e.g., 6 months, 2 years" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="price" class="form-label">Price</label>
                         <input type="number" class="form-control" id="price" name="price" step="0.01" min="0">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="link" class="form-label">Link</label>
                         <input type="url" class="form-control" id="link" name="link">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="4"></textarea>
                     </div>
-                    
+
+                    <div class="mb-3">
+                        <label for="thumbnail" class="form-label">Course Thumbnail</label>
+                        <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Add Course</button>
                     <a href="{% url 'manage_courses' %}" class="btn btn-secondary">Cancel</a>
                 </form>

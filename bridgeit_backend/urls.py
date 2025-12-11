@@ -44,4 +44,4 @@ urlpatterns = [
     path('api/courses/', include('courses.urls')),
     path('api/feed/', include('feed.urls')),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

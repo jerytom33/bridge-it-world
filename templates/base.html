@@ -234,9 +234,49 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script id="django-messages" type="application/json">
+        [
+            {% for message in messages %}
+            {
+                "level": "{{ message.tags }}",
+                "message": "{{ message|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    </script>
+
     <script>
+        // Display Django messages as SweetAlert2 toasts
+        try {
+            const messages = JSON.parse(document.getElementById('django-messages').textContent);
+            messages.forEach(msg => {
+                Swal.fire({
+                    text: msg.message,
+                    icon: msg.level === 'error' ? 'error' :
+                        msg.level === 'success' ? 'success' :
+                            msg.level === 'warning' ? 'warning' : 'info',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'colored-toast'
+                    }
+                });
+            });
+        } catch (e) {
+            console.error('Error parsing messages:', e);
+        }
+
         // Initialize Lucide Icons
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
 
         // Navbar Scroll Effect
         const navbar = document.getElementById('navbar');
@@ -255,31 +295,33 @@
         const mobileMenu = document.getElementById('mobile-menu');
         let isMenuOpen = false;
 
-        mobileMenuBtn.addEventListener('click', () => {
-            isMenuOpen = !isMenuOpen;
-            const icon = isMenuOpen ? 'x' : 'menu';
-            mobileMenuBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
-            lucide.createIcons();
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                const icon = isMenuOpen ? 'x' : 'menu';
+                mobileMenuBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
 
-            if (isMenuOpen) {
-                mobileMenu.classList.remove('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
-                mobileMenu.classList.add('opacity-100', 'scale-y-100', 'translate-y-0');
-            } else {
-                mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
-                mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
-            }
-        });
-
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => {
-                isMenuOpen = false;
-                mobileMenuBtn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
-                lucide.createIcons();
-                mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
-                mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
+                if (isMenuOpen) {
+                    mobileMenu.classList.remove('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                    mobileMenu.classList.add('opacity-100', 'scale-y-100', 'translate-y-0');
+                } else {
+                    mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                    mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
+                }
             });
-        });
+
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    isMenuOpen = false;
+                    mobileMenuBtn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                    mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
+                });
+            });
+        }
     </script>
 </body>
 

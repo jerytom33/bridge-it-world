@@ -41,6 +41,7 @@ class Exam(models.Model):
     link = models.URLField(blank=True)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)  # type: ignore
+    thumbnail = models.ImageField(upload_to='thumbnails/exams/', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
 

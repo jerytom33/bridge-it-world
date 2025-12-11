@@ -2,8 +2,21 @@ import google.generativeai as genai
 import os
 import logging
 import json
+import firebase_admin
+from firebase_admin import credentials, messaging
 
 logger = logging.getLogger(__name__)
+
+# Initialize Firebase Admin SDK
+# Path to service account key
+SERVICE_ACCOUNT_KEY = r"L:\ALTASH\bridge-it-world\bridge-it-world\firebase\bridge-it-world-firebase-adminsdk-fbsvc-39ef5e20e0.json"
+if not firebase_admin._apps:
+    try:
+        cred = credentials.Certificate(SERVICE_ACCOUNT_KEY)
+        firebase_admin.initialize_app(cred)
+        logger.info("Firebase Admin SDK initialized successfully.")
+    except Exception as e:
+        logger.error(f"Failed to initialize Firebase Admin SDK: {e}")
 
 def call_gemini_api(prompt):
     """
@@ -61,7 +74,7 @@ def call_gemini_api(prompt):
 # Notification Helper Functions
 def create_notification(recipient, notification_type, title, message, related_user=None, related_post_id=None):
     """
-    Create a notification for a specific user.
+    Create a notification for a specific user and send push notification via FCM.
     
     Args:
         recipient: User object who will receive the notification
@@ -74,9 +87,10 @@ def create_notification(recipient, notification_type, title, message, related_us
     Returns:
         Notification object
     """
-    from core.models import Notification
+    from core.models import Notification, FCMToken
     
-    return Notification.objects.create(
+    # 1. Create Database Notification
+    notification = Notification.objects.create(
         recipient=recipient,
         notification_type=notification_type,
         title=title,
@@ -84,6 +98,38 @@ def create_notification(recipient, notification_type, title, message, related_us
         related_user=related_user,
         related_post_id=related_post_id
     )
+    
+    # 2. Send FCM Push Notification
+    try:
+        # Get all active tokens for the user
+        fcm_tokens = FCMToken.objects.filter(user=recipient).values_list('token', flat=True)
+        
+        if fcm_tokens:
+            # Create a message to send to all devices
+            # Note: For simplicity, sending individual messages, but could use multicast for efficiency
+            for token in fcm_tokens:
+                try:
+                    fcm_message = messaging.Message(
+                        notification=messaging.Notification(
+                            title=title,
+                            body=message,
+                        ),
+                        data={
+                            'type': notification_type,
+                            'notification_id': str(notification.id),
+                            'related_post_id': str(related_post_id) if related_post_id else "",
+                        },
+                        token=token,
+                    )
+                    response = messaging.send(fcm_message)
+                    logger.info(f"Successfully sent message to token {token[:10]}...: {response}")
+                except Exception as e:
+                    logger.warning(f"Failed to send FCM message to token {token[:10]}...: {e}")
+                    # Optional: Delete invalid tokens here
+    except Exception as e:
+        logger.error(f"Error in FCM notification process: {e}")
+    
+    return notification
 
 
 def notify_all_admins(notification_type, title, message, related_user=None, related_post_id=None):

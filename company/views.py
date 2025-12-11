@@ -85,7 +85,11 @@ def update_company_profile(request):
         employee_count = request.POST.get('employee_count', '')
         
         # Handle empty numeric fields
-        established_year = int(established) if established and established.strip() else company_profile.established
+        # Handle empty numeric fields
+        try:
+            established_year = int(established) if established and established.strip() else None
+        except ValueError:
+            established_year = None
         employee_count_val = employee_count.strip() if employee_count and employee_count.strip() else company_profile.employee_count
         
         # Update company profile
@@ -97,7 +101,11 @@ def update_company_profile(request):
         company_profile.employee_count = employee_count_val
         company_profile.location = request.POST.get('location', company_profile.location)
         company_profile.contact_email = request.POST.get('contact_email', company_profile.contact_email)
+        company_profile.contact_email = request.POST.get('contact_email', company_profile.contact_email)
         company_profile.contact_phone = request.POST.get('contact_phone', company_profile.contact_phone)
+        
+        if 'logo' in request.FILES:
+            company_profile.logo = request.FILES['logo']
         
         try:
             company_profile.save()

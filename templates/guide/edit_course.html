@@ -12,49 +12,69 @@
                 <h5 class="card-title mb-0">Edit Course Information</h5>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="title" class="form-label">Course Title</label>
-                        <input type="text" class="form-control" id="title" name="title" value="{{ course.title }}" required>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ course.title }}"
+                            required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="provider" class="form-label">Provider</label>
-                        <input type="text" class="form-control" id="provider" name="provider" value="{{ course.provider }}" required>
+                        <input type="text" class="form-control" id="provider" name="provider"
+                            value="{{ course.provider }}" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="career_path" class="form-label">Career Path</label>
                         <select class="form-select" id="career_path" name="career_path" required>
-                            <option value="software" {% if course.career_path == 'software' %}selected{% endif %}>Software Engineering</option>
-                            <option value="data" {% if course.career_path == 'data' %}selected{% endif %}>Data Science</option>
-                            <option value="marketing" {% if course.career_path == 'marketing' %}selected{% endif %}>Digital Marketing</option>
-                            <option value="finance" {% if course.career_path == 'finance' %}selected{% endif %}>Finance</option>
-                            <option value="other" {% if course.career_path == 'other' %}selected{% endif %}>Other</option>
+                            <option value="software" {% if course.career_path=='software' %}selected{% endif %}>Software
+                                Engineering</option>
+                            <option value="data" {% if course.career_path=='data' %}selected{% endif %}>Data Science
+                            </option>
+                            <option value="marketing" {% if course.career_path=='marketing' %}selected{% endif %}>
+                                Digital Marketing</option>
+                            <option value="finance" {% if course.career_path=='finance' %}selected{% endif %}>Finance
+                            </option>
+                            <option value="other" {% if course.career_path=='other' %}selected{% endif %}>Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="duration" class="form-label">Duration</label>
-                        <input type="text" class="form-control" id="duration" name="duration" value="{{ course.duration }}" placeholder="e.g., 6 months, 2 years" required>
+                        <input type="text" class="form-control" id="duration" name="duration"
+                            value="{{ course.duration }}" placeholder="e.g., 6 months, 2 years" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="price" class="form-label">Price</label>
-                        <input type="number" class="form-control" id="price" name="price" value="{{ course.price }}" step="0.01" min="0">
+                        <input type="number" class="form-control" id="price" name="price" value="{{ course.price }}"
+                            step="0.01" min="0">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="link" class="form-label">Link</label>
                         <input type="url" class="form-control" id="link" name="link" value="{{ course.link }}">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4">{{ course.description }}</textarea>
+                        <textarea class="form-control" id="description" name="description"
+                            rows="4">{{ course.description }}</textarea>
                     </div>
-                    
+
+                    <div class="mb-3">
+                        <label for="thumbnail" class="form-label">Course Thumbnail</label>
+                        {% if course.thumbnail %}
+                        <div class="mb-2">
+                            <img src="{{ course.thumbnail.url }}" alt="Current Thumbnail" class="img-thumbnail"
+                                style="max-height: 150px;">
+                        </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Update Course</button>
                     <a href="{% url 'manage_courses' %}" class="btn btn-secondary">Cancel</a>
                 </form>

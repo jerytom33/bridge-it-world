@@ -15,6 +15,7 @@ class GuideProfile(models.Model):
     company = models.CharField(max_length=100, blank=True)
     position = models.CharField(max_length=100, blank=True)
     linkedin_url = models.URLField(blank=True)
+    profile_image = models.ImageField(upload_to='guide_profiles/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)  # type: ignore
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

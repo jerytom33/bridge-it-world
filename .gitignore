@@ -50,3 +50,6 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+# Firebase
+firebase/bridge-it-world-firebase-adminsdk-fbsvc-39ef5e20e0.json

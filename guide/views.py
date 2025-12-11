@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import GuideProfile, GuideExam, GuideCourse
@@ -72,10 +72,23 @@ def update_guide_profile(request):
         guide_profile.bio = request.POST.get('bio', guide_profile.bio)
         expertise_input = request.POST.get('expertise', '')
         guide_profile.expertise = [e.strip() for e in expertise_input.split(',') if e.strip()] if expertise_input else []
-        guide_profile.experience_years = request.POST.get('experience_years', guide_profile.experience_years)
+        guide_profile.expertise = [e.strip() for e in expertise_input.split(',') if e.strip()] if expertise_input else []
+        
+        experience_years = request.POST.get('experience_years')
+        if experience_years and experience_years.strip():
+            try:
+                guide_profile.experience_years = int(experience_years)
+            except ValueError:
+                guide_profile.experience_years = None
+        else:
+            guide_profile.experience_years = None
+        
         guide_profile.company = request.POST.get('company', guide_profile.company)
         guide_profile.position = request.POST.get('position', guide_profile.position)
+        guide_profile.position = request.POST.get('position', guide_profile.position)
         guide_profile.linkedin_url = request.POST.get('linkedin_url', guide_profile.linkedin_url)
+        if 'profile_image' in request.FILES:
+            guide_profile.profile_image = request.FILES['profile_image']
         guide_profile.save()
         messages.success(request, 'Guide profile updated successfully!')
         return redirect('guide_dashboard')
@@ -136,6 +149,7 @@ def add_exam(request):
             last_date=request.POST.get('last_date', ''),
             link=request.POST.get('link', ''),
             description=request.POST.get('description', ''),
+            thumbnail=request.FILES.get('thumbnail')
         )
         exam.save()  # type: ignore
         
@@ -179,6 +193,8 @@ def edit_exam(request, exam_id):
         exam.last_date = request.POST.get('last_date', exam.last_date)
         exam.link = request.POST.get('link', exam.link)
         exam.description = request.POST.get('description', exam.description)
+        if 'thumbnail' in request.FILES:
+            exam.thumbnail = request.FILES['thumbnail']
         exam.save()
         
         messages.success(request, 'Exam updated successfully!')
@@ -272,6 +288,7 @@ def add_course(request):
             price=request.POST.get('price', 0),
             link=request.POST.get('link', ''),
             description=request.POST.get('description', ''),
+            thumbnail=request.FILES.get('thumbnail')
         )
         course.save()  # type: ignore
         
@@ -316,6 +333,8 @@ def edit_course(request, course_id):
         course.price = request.POST.get('price', course.price)
         course.link = request.POST.get('link', course.link)
         course.description = request.POST.get('description', course.description)
+        if 'thumbnail' in request.FILES:
+            course.thumbnail = request.FILES['thumbnail']
         course.save()
         
         messages.success(request, 'Course updated successfully!')
@@ -432,3 +451,10 @@ def guide_login(request):
     return render(request, 'guide/login.html')
 
 
+
+def guide_logout(request):
+    """View for guide logout"""
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request, 'You have been logged out successfully.')
+    return redirect('guide_login')
