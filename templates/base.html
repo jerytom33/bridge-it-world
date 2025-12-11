@@ -1,136 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}BridgeIT Admin Panel{% endblock %}</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <title>{% block title %}BridgeIT | Your Career Compass{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        },
+                        accent: {
+                            500: '#8b5cf6', // Violet
+                            600: '#7c3aed',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
         }
 
-        .sidebar {
-            background-color: #343a40;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            overflow-y: auto;
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .main-content {
-            margin-left: 250px;
-        }
-
-        .main-content-full {
-            margin-left: 0;
-        }
-
-        .stat-card {
-            border-radius: 10px;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        .text-gradient {
+            background: linear-gradient(to right, #2563eb, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            {% if user.is_authenticated and user.is_staff %}
-            <!-- Sidebar - Only show for authenticated admin users -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <h4 class="text-white">BridgeIT</h4>
-                        <p class="text-muted">Admin Panel</p>
+<body
+    class="min-h-screen bg-white text-slate-900 selection:bg-brand-100 selection:text-brand-900 overflow-x-hidden relative">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent py-5">
+        <div class="container mx-auto px-6 md:px-12 lg:px-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="flex items-center gap-2 cursor-pointer group">
+                <div
+                    class="bg-gradient-to-br from-brand-600 to-accent-600 p-2 rounded-lg text-white group-hover:rotate-12 transition-transform duration-300">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <span
+                    class="text-xl font-bold tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
+                    Bridge<span class="text-brand-600">IT</span>
+                </span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features"
+                    class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Features</a>
+                <a href="#how-it-works"
+                    class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">How it Works</a>
+                <a href="#testimonials"
+                    class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Success
+                    Stories</a>
+            </div>
+
+            <!-- Desktop CTA -->
+            <div class="hidden md:flex items-center gap-4">
+                <div class="relative group">
+                    <button class="text-sm font-semibold text-slate-900 hover:text-brand-600 flex items-center gap-1">
+                        Log in <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                    <!-- Login Dropdown -->
+                    <div
+                        class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                        <a href="{% url 'guide_login' %}"
+                            class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-600 rounded-lg">Guide
+                            Login</a>
+                        <a href="{% url 'company_login' %}"
+                            class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-600 rounded-lg">Company
+                            Login</a>
+                        <a href="{% url 'login' %}"
+                            class="block px-4 py-2 text-sm text-slate-600 hover:bg-brand-50 hover:text-brand-600 rounded-lg">Admin
+                            Login</a>
                     </div>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/admin-panel/' %}active{% endif %}"
-                                href="{% url 'admin_dashboard' %}">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'guides-companies' in request.path %}active{% endif %}"
-                                href="{% url 'manage_guides_companies' %}">
-                                <i class="bi bi-people me-2"></i>Guides & Companies
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if '/admin-panel/exams' in request.path %}active{% endif %}"
-                                href="{% url 'admin_manage_exams' %}">
-                                <i class="bi bi-book me-2"></i>Exams
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if '/admin-panel/courses' in request.path %}active{% endif %}"
-                                href="{% url 'admin_manage_courses' %}">
-                                <i class="bi bi-mortarboard me-2"></i>Courses
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'users' in request.path %}active{% endif %}"
-                                href="{% url 'manage_users' %}">
-                                <i class="bi bi-person-x me-2"></i>Block Users
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if 'stats' in request.path %}active{% endif %}"
-                                href="{% url 'admin_stats' %}">
-                                <i class="bi bi-bar-chart me-2"></i>Statistics
-                            </a>
-                        </li>
+                </div>
+                <a href="#get-started"
+                    class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-brand-500/25">
+                    Get Started
+                </a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-slate-900 p-2">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-100 p-4 shadow-xl transition-all duration-300 ease-in-out origin-top opacity-0 scale-y-0 -translate-y-4 pointer-events-none">
+            <div class="flex flex-col gap-4">
+                <a href="#features"
+                    class="text-base font-medium text-slate-600 hover:text-brand-600 py-2 mobile-link">Features</a>
+                <a href="#how-it-works"
+                    class="text-base font-medium text-slate-600 hover:text-brand-600 py-2 mobile-link">How it Works</a>
+                <a href="#testimonials"
+                    class="text-base font-medium text-slate-600 hover:text-brand-600 py-2 mobile-link">Success
+                    Stories</a>
+                <hr class="border-slate-100">
+                <div class="space-y-2">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Log in as</p>
+                    <a href="{% url 'guide_login' %}"
+                        class="block text-base font-medium text-slate-900 hover:text-brand-600">Guide</a>
+                    <a href="{% url 'company_login' %}"
+                        class="block text-base font-medium text-slate-900 hover:text-brand-600">Company</a>
+                    <a href="{% url 'login' %}"
+                        class="block text-base font-medium text-slate-900 hover:text-brand-600">Admin</a>
+                </div>
+                <a href="#get-started"
+                    class="w-full bg-brand-600 hover:bg-brand-700 text-white text-center px-5 py-3 rounded-lg text-base font-medium transition-colors shadow-lg shadow-brand-500/25 mobile-link">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 pt-16 pb-8">
+        <div class="container mx-auto px-6 md:px-12 lg:px-20">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-gradient-to-br from-brand-600 to-accent-600 p-1.5 rounded text-white">
+                            <i data-lucide="compass" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xl font-bold text-slate-900">BridgeIT</span>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Empowering professionals to navigate their career paths with data-driven insights and human
+                        connection.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="#" class="text-slate-400 hover:text-brand-600 transition-colors"><i
+                                data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-brand-600 transition-colors"><i
+                                data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-brand-600 transition-colors"><i
+                                data-lucide="github" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li><a href="#features" class="hover:text-brand-600">Features</a></li>
+                        <li><a href="#how-it-works" class="hover:text-brand-600">How it Works</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Pricing</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Enterprise</a></li>
                     </ul>
                 </div>
-            </nav>
-            {% endif %}
 
-            <!-- Main Content -->
-            <main
-                class="col-md-9 ms-sm-auto col-lg-10 px-md-4 {% if user.is_authenticated and user.is_staff %}main-content{% else %}main-content-full{% endif %}">
-                <!-- Header -->
-                <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">{% block header %}Dashboard{% endblock %}</h1>
-                    {% if user.is_authenticated and user.is_staff %}
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <a href="{% url 'home' %}" class="btn btn-sm btn-outline-primary" title="Go to Homepage">
-                                <i class="bi bi-house"></i> Home
-                            </a>
-                            <a href="{% url 'admin_logout' %}" class="btn btn-sm btn-outline-danger" title="Logout">
-                                <i class="bi bi-box-arrow-right"></i> Logout
-                            </a>
-                        </div>
-                    </div>
-                    {% endif %}
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li><a href="#" class="hover:text-brand-600">Blog</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Career Guides</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Salary Calculator</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Help Center</a></li>
+                    </ul>
                 </div>
 
-                <!-- Content Block -->
-                {% block content %}
-                <!-- Default content will be replaced by specific pages -->
-                {% endblock %}
-            </main>
-        </div>
-    </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-600">
+                        <li><a href="#" class="hover:text-brand-600">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-brand-600">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-sm text-slate-500">
+                    &copy; {% now "Y" %} BridgeIT Inc. All rights reserved.
+                </p>
+                <div class="flex items-center gap-1 text-sm text-slate-500">
+                    Made with <i data-lucide="heart" class="w-3.5 h-3.5 fill-red-500 text-red-500"></i> for ambitious
+                    careers.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.remove('bg-transparent', 'py-5');
+                navbar.classList.add('glass-nav', 'py-3', 'shadow-sm');
+            } else {
+                navbar.classList.add('bg-transparent', 'py-5');
+                navbar.classList.remove('glass-nav', 'py-3', 'shadow-sm');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let isMenuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            const icon = isMenuOpen ? 'x' : 'menu';
+            mobileMenuBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
+            lucide.createIcons();
+
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                mobileMenu.classList.add('opacity-100', 'scale-y-100', 'translate-y-0');
+            } else {
+                mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                isMenuOpen = false;
+                mobileMenuBtn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
+                lucide.createIcons();
+                mobileMenu.classList.add('opacity-0', 'scale-y-0', '-translate-y-4', 'pointer-events-none');
+                mobileMenu.classList.remove('opacity-100', 'scale-y-100', 'translate-y-0');
+            });
+        });
+    </script>
 </body>
 
 </html>

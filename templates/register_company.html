@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'legacy_base.html' %}
 
 {% block title %}Company Registration - BridgeIT{% endblock %}
 
@@ -12,8 +12,9 @@
                 <h4 class="mb-0">Company Registration Form</h4>
             </div>
             <div class="card-body">
-                <p class="text-muted">Please fill out this form to register your company. Your application will be reviewed by our admin team.</p>
-                
+                <p class="text-muted">Please fill out this form to register your company. Your application will be
+                    reviewed by our admin team.</p>
+
                 <form method="post">
                     {% csrf_token %}
                     <div class="row">
@@ -26,27 +27,28 @@
                             <input type="text" class="form-control" id="contact_person" name="contact_person" required>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="email" class="form-label">Company Email Address *</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="username" class="form-label">Admin Username *</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="password" class="form-label">Password *</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="confirm_password" class="form-label">Confirm Password *</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                            required>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label">Company Phone Number</label>
@@ -54,10 +56,11 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="website" class="form-label">Company Website</label>
-                            <input type="url" class="form-control" id="website" name="website" placeholder="https://www.example.com">
+                            <input type="url" class="form-control" id="website" name="website"
+                                placeholder="https://www.example.com">
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="industry" class="form-label">Industry *</label>
                         <select class="form-select" id="industry" name="industry" required>
@@ -73,11 +76,12 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="established" class="form-label">Year Established</label>
-                            <input type="number" class="form-control" id="established" name="established" min="1900" max="2025">
+                            <input type="number" class="form-control" id="established" name="established" min="1900"
+                                max="2025">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="employee_count" class="form-label">Employee Count</label>
@@ -92,29 +96,33 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="location" class="form-label">Company Location *</label>
-                        <input type="text" class="form-control" id="location" name="location" required placeholder="City, State/Country">
+                        <input type="text" class="form-control" id="location" name="location" required
+                            placeholder="City, State/Country">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Company Description *</label>
-                        <textarea class="form-control" id="description" name="description" rows="4" required placeholder="Tell us about your company, mission, and what you're looking for in candidates..."></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="4" required
+                            placeholder="Tell us about your company, mission, and what you're looking for in candidates..."></textarea>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="job_roles" class="form-label">Job Roles You Typically Hire For</label>
-                        <input type="text" class="form-control" id="job_roles" name="job_roles" placeholder="e.g., Software Engineers, Marketing Managers, Sales Representatives">
+                        <input type="text" class="form-control" id="job_roles" name="job_roles"
+                            placeholder="e.g., Software Engineers, Marketing Managers, Sales Representatives">
                     </div>
-                    
+
                     <div class="form-check mb-4">
                         <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
                         <label class="form-check-label" for="terms">
-                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> *
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and
+                                Conditions</a> *
                         </label>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary w-100">Submit Application</button>
                 </form>
             </div>
@@ -142,7 +150,8 @@
                     <li>You understand that your account may be suspended or terminated for violations</li>
                     <li>You agree to our privacy policy and data handling practices</li>
                 </ol>
-                <p>Upon approval, you will receive an email notification with further instructions on how to post jobs and interact with students.</p>
+                <p>Upon approval, you will receive an email notification with further instructions on how to post jobs
+                    and interact with students.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

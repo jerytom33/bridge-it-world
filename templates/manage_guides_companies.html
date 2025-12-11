@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'admin_base.html' %}
 
 {% block title %}Manage Guides & Companies - BridgeIT Admin Panel{% endblock %}
 
@@ -7,10 +7,12 @@
 {% block content %}
 <ul class="nav nav-tabs mb-4" id="approvalTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="guides-tab" data-bs-toggle="tab" data-bs-target="#guides" type="button" role="tab">Guides</button>
+        <button class="nav-link active" id="guides-tab" data-bs-toggle="tab" data-bs-target="#guides" type="button"
+            role="tab">Guides</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies" type="button" role="tab">Companies</button>
+        <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies" type="button"
+            role="tab">Companies</button>
     </li>
 </ul>
 
@@ -21,7 +23,8 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Pending Guide Approvals</h5>
                 <div>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..." style="width: 200px;">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..."
+                        style="width: 200px;">
                 </div>
             </div>
             <div class="card-body">
@@ -62,12 +65,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Approved Guides</h5>
                 <div>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..." style="width: 200px;">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search guides..."
+                        style="width: 200px;">
                 </div>
             </div>
             <div class="card-body">
@@ -113,7 +117,8 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Pending Company Approvals</h5>
                 <div>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..." style="width: 200px;">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..."
+                        style="width: 200px;">
                 </div>
             </div>
             <div class="card-body">
@@ -156,12 +161,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Approved Companies</h5>
                 <div>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..." style="width: 200px;">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search companies..."
+                        style="width: 200px;">
                 </div>
             </div>
             <div class="card-body">
@@ -186,7 +192,8 @@
                                 <td>{{ company.phone|default:"N/A" }}</td>
                                 <td>{{ company.created_at|date:"Y-m-d" }}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="blockUser('{{ company.id }}')">
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        onclick="blockUser('{{ company.id }}')">
                                         <i class="bi bi-person-x"></i> Block
                                     </button>
                                 </td>
@@ -211,14 +218,14 @@
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '{% url "approve_guide" 0 %}'.replace('0', id);
-            
+
             // Add CSRF token
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
             csrfToken.value = '{{ csrf_token }}';
             form.appendChild(csrfToken);
-            
+
             // Submit the form
             document.body.appendChild(form);
             form.submit();
@@ -231,14 +238,14 @@
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '{% url "reject_guide" 0 %}'.replace('0', id);
-            
+
             // Add CSRF token
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
             csrfToken.value = '{{ csrf_token }}';
             form.appendChild(csrfToken);
-            
+
             // Submit the form
             document.body.appendChild(form);
             form.submit();
@@ -251,14 +258,14 @@
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '{% url "approve_company" 0 %}'.replace('0', id);
-            
+
             // Add CSRF token
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
             csrfToken.value = '{{ csrf_token }}';
             form.appendChild(csrfToken);
-            
+
             // Submit the form
             document.body.appendChild(form);
             form.submit();
@@ -271,14 +278,14 @@
             var form = document.createElement('form');
             form.method = 'POST';
             form.action = '{% url "reject_company" 0 %}'.replace('0', id);
-            
+
             // Add CSRF token
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
             csrfToken.value = '{{ csrf_token }}';
             form.appendChild(csrfToken);
-            
+
             // Submit the form
             document.body.appendChild(form);
             form.submit();
