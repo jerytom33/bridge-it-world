@@ -78,4 +78,24 @@ class Notification(models.Model):
         db_table = 'core_notification'
     
     def __str__(self):
-        return f"{self.recipient.username} - {self.title}"  # type: ignore
+        return f"{self.recipient.username} - {self.title}"
+
+
+class FCMToken(models.Model):
+    """Model to store FCM tokens for push notifications."""
+    
+    # Type annotation to help static analysis tools
+    objects = models.Manager()
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='fcm_tokens')
+    token = models.CharField(max_length=255, unique=True)
+    device_type = models.CharField(max_length=20, default='android')
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'core_fcm_token'
+        ordering = ['-last_used']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.device_type} - {self.token[:10]}..."

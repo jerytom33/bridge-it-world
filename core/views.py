@@ -227,5 +227,51 @@ class MarkAllNotificationsReadView(APIView):
         from .models import Notification
         
         Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
-        return Response({'success': True, 'message': 'All notifications marked as read'})
+
+class FCMTokenView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        """Register or update FCM token"""
+        from .models import FCMToken
+        from .serializers import FCMTokenSerializer
+        
+        token = request.data.get('token')
+        device_type = request.data.get('device_type', 'android')
+        
+        if not token:
+            return Response({'error': 'Token is required'}, status=400)
+            
+        # Update or create token
+        fcm_token, created = FCMToken.objects.update_or_create(
+            user=request.user,
+            token=token,
+            defaults={'device_type': device_type}
+        )
+        
+        # Optional: remove old tokens from this user if you want single device policy
+        # FCMToken.objects.filter(user=request.user).exclude(id=fcm_token.id).delete()
+        
+        serializer = FCMTokenSerializer(fcm_token)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TestNotificationView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        """Send a test notification to the current user"""
+        from core.utils import create_notification
+        
+        try:
+            notification = create_notification(
+                recipient=request.user,
+                notification_type='test_notification',
+                title="Test Notification",
+                message="This is a test notification from BridgeIT backend!",
+                related_user=request.user
+            )
+            return Response({'success': True, 'message': 'Test notification sent'})
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
 

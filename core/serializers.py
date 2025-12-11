@@ -40,3 +40,10 @@ class NotificationSerializer(serializers.ModelSerializer):
         if obj.related_user:
             return f"{obj.related_user.first_name} {obj.related_user.last_name}".strip() or obj.related_user.username
         return None
+
+
+class FCMTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        from .models import FCMToken
+        model = FCMToken
+        fields = ['token', 'device_type']
