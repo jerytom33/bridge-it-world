@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge It World - Test Pages</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            color: #333;
+        }
+
+        .info-box li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e01e5a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Bridge It World</h1>
+            <p>AI-Powered Testing Platform</p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="icon">📄</div>
+                <h2>Resume Analyzer</h2>
+                <p>Upload your resume and get AI-powered analysis, career recommendations, and skill insights.</p>
+                <a href="/api/resume/test/" class="button">Try Resume Analyzer</a>
+            </div>
+
+            <div class="card">
+                <div class="icon">🧠</div>
+                <h2>MegaLLM Aptitude Test</h2>
+                <p>Take an AI-generated personalized aptitude test and get detailed performance analysis.</p>
+                <a href="/api/aptitude/test/" class="button">Take Aptitude Test</a>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Available Features</h3>
+            <ul>
+                <li>AI-powered resume analysis with career path recommendations</li>
+                <li>Personalized aptitude questions based on education level</li>
+                <li>Detailed performance breakdown by category</li>
+                <li>Study recommendations and career suggestions</li>
+                <li>Real-time AI analysis using MegaLLM</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🔧 For Developers</h3>
+            <ul>
+                <li><strong>Resume Test:</strong> <code>/api/resume/test/</code></li>
+                <li><strong>Aptitude Test:</strong> <code>/api/aptitude/test/</code></li>
+                <li><strong>Environment:</strong> Set <code>MEGALLM_API_KEY</code>, <code>MEGALLM_MODEL</code></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

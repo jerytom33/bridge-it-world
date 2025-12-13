@@ -52,7 +52,17 @@ class ResumeUploadView(APIView):
             for page in pdf_reader.pages:
                 text += page.extract_text()
             
-            # Prepare prompt for Gemini
+            # Try to use MegaLLM for enhanced analysis
+            megallm_analysis = None
+            try:
+                from services.megallm_service import get_megallm_service
+                megallm_service = get_megallm_service()
+                megallm_analysis = megallm_service.analyze_resume(text)
+            except Exception as megallm_error:
+                # Fall back gracefully if MegaLLM fails
+                print(f"MegaLLM analysis failed: {megallm_error}")
+            
+            # Prepare prompt for Gemini (as fallback/complement)
             prompt = f"""You are a senior career counselor. Analyze this resume and return strict JSON with keys: 
 suitable_career_paths (list of strings), skill_gaps (list), recommended_courses (list), suggested_next_steps (list), overall_summary (string)
 
@@ -82,6 +92,9 @@ Resume text:
                         "overall_summary": "Unable to parse structured response"
                     }
             
+            # Add MegaLLM analysis to response if available
+            if megallm_analysis:
+                gemini_response_json['megallm_analysis'] = megallm_analysis
             
             # Analyze with simplified resume analyzer (no temp file needed)
             pdf_file.seek(0)  # Reset file pointer

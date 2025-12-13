@@ -24,14 +24,14 @@ def call_gemini_api(prompt):
     """
     try:
         # Configure Gemini API key  
-        api_key = os.environ.get('GEMINI_API_KEY', 'AIzaSyD_Foa_APEbSGIpusGOjQI2eB5_jYUtduY')
+        api_key = os.environ.get('GEMINI_API_KEY', 'AIzaSyDYKCaq8y69q3MPouPLPNyki9UBAVS-x5Q')
         genai.configure(api_key=api_key)
         
         # Try multiple model names in order of preference
         models_to_try = [
-            'gemini-pro',
-            'gemini-1.5-pro',
-            'gemini-1.5-flash',
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-flash-latest',
         ]
         
         last_error = None

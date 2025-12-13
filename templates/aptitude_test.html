@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test - Bridge It World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .question-header {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option input {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .score-card {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .analysis-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .analysis-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c33;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            color: #1976d2;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🧠 Aptitude Test</h1>
+            <p class="subtitle">AI-Powered Personalized Assessment</p>
+
+            <div class="info">
+                <strong>Note:</strong> This is a test page for the Aptitude Test integration. Questions are generated
+                using AI
+                based on your education level.
+            </div>
+
+            <!-- Setup Form -->
+            <div id="setupForm">
+                <div class="form-group">
+                    <label for="educationLevel">Select Your Education Level:</label>
+                    <select id="educationLevel">
+                        <option value="10th">10th Grade</option>
+                        <option value="12th" selected>12th Grade</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Bachelors">Bachelor's Degree</option>
+                        <option value="Masters">Master's Degree</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="numQuestions">Number of Questions:</label>
+                    <select id="numQuestions">
+                        <option value="5">5 Questions</option>
+                        <option value="10" selected>10 Questions</option>
+                        <option value="15">15 Questions</option>
+                        <option value="20">20 Questions</option>
+                    </select>
+                </div>
+
+                <button onclick="generateQuestions()">Generate Test Questions</button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating personalized questions... This may take a few moments.</p>
+            </div>
+
+            <!-- Questions Form -->
+            <div id="questionsForm" style="display: none;">
+                <div id="questionsContainer"></div>
+                <button onclick="submitAnswers()">Submit Answers</button>
+                <button onclick="resetTest()" style="background: #6c757d; margin-left: 10px;">Start Over</button>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestions = [];
+        let userAnswers = {};
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        async function generateQuestions() {
+            const level = document.getElementById('educationLevel').value;
+            const count = document.getElementById('numQuestions').value;
+
+            document.getElementById('setupForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/aptitude/personalized-questions/?level=${level}&count=${count}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate questions. Make sure AI service is configured correctly.');
+                }
+
+                const data = await response.json();
+                currentQuestions = data.data.questions;
+                displayQuestions(currentQuestions);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('questionsForm').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('setupForm').style.display = 'block';
+                alert('Error: ' + error.message + '\n\nMake sure:\n1. You are LOGGED IN (e.g. via /admin)\n2. Server is running\n3. AI environment variables are set');
+            }
+        }
+
+        function displayQuestions(questions) {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+
+                let optionsHtml = '';
+                q.options.forEach((option, optIndex) => {
+                    const optionLetter = String.fromCharCode(65 + optIndex); // A, B, C, D
+                    optionsHtml += `
+                        <div class="option">
+                            <input type="radio" 
+                                   name="question${index}" 
+                                   value="${optionLetter}" 
+                                   id="q${index}_${optionLetter}"
+                                   onchange="saveAnswer(${index}, '${optionLetter}')">
+                            <label for="q${index}_${optionLetter}">${optionLetter}. ${option}</label>
+                        </div>
+                    `;
+                });
+
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        Question ${index + 1}: ${q.question}
+                        <span style="float: right; font-size: 0.8em; color: #666;">
+                            ${q.category} | ${q.difficulty}
+                        </span>
+                    </div>
+                    ${optionsHtml}
+                `;
+
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function saveAnswer(questionIndex, answer) {
+            userAnswers[questionIndex] = answer;
+        }
+
+        async function submitAnswers() {
+            if (Object.keys(userAnswers).length !== currentQuestions.length) {
+                alert('Please answer all questions before submitting!');
+                return;
+            }
+
+            document.getElementById('questionsForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('/api/aptitude/analyze-results/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        questions: currentQuestions,
+                        answers: userAnswers
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze results');
+                }
+
+                const data = await response.json();
+                displayResults(data.data);
+
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('questionsForm').style.display = 'block';
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const aiAnalysis = data.ai_analysis;
+
+            let categoryHtml = '';
+            for (const [category, stats] of Object.entries(data.category_breakdown)) {
+                const percentage = ((stats.correct / stats.total) * 100).toFixed(0);
+                categoryHtml += `
+                    <div style="margin: 15px 0;">
+                        <strong>${category}:</strong> ${stats.correct}/${stats.total} 
+                        <span style="color: ${percentage >= 60 ? '#4caf50' : '#f44336'};">
+                            (${percentage}%)
+                        </span>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="score-card">
+                    <h2>Your Score</h2>
+                    <div class="score">${data.score.toFixed(1)}%</div>
+                    <p>${data.correct_answers} out of ${data.total_questions} correct</p>
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>📊 Category Breakdown</h3>
+                    ${categoryHtml}
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>💡 AI Analysis</h3>
+                    <p><strong>Overall Performance:</strong> ${aiAnalysis.overall_performance || 'Good job!'}</p>
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>💪 Strong Areas</h3>
+                    ${(aiAnalysis.strong_areas || []).map(area => `<span class="tag">${area}</span>`).join('')}
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>📚 Areas to Improve</h3>
+                    ${(aiAnalysis.weak_areas || []).map(area => `<span class="tag" style="background: #f44336;">${area}</span>`).join('')}
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>🎯 Study Recommendations</h3>
+                    <ul>
+                        ${(aiAnalysis.study_recommendations || []).map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="analysis-section">
+                    <h3>🚀 Career Suggestions</h3>
+                    ${(aiAnalysis.career_suggestions || []).map(career => `<span class="tag" style="background: #4caf50;">${career}</span>`).join('')}
+                </div>
+                
+                <button onclick="resetTest()">Take Another Test</button>
+            `;
+
+            resultsDiv.style.display = 'block';
+        }
+
+        function resetTest() {
+            currentQuestions = [];
+            userAnswers = {};
+            document.getElementById('setupForm').style.display = 'block';
+            document.getElementById('questionsForm').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('questionsContainer').innerHTML = '';
+        }
+    </script>
+</body>
+
+</html>

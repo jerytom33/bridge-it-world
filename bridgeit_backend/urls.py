@@ -5,6 +5,11 @@ from django.contrib.auth import views as auth_views
 from admin_panel import views as admin_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import render
+
+def test_index(request):
+    """Landing page for backend test interfaces"""
+    return render(request, 'test_index.html')
 
 def home_view(request):
     return JsonResponse({
@@ -23,12 +28,14 @@ def home_view(request):
             "exams": "/api/exams/",
             "courses": "/api/courses/",
             "feed": "/api/feed/",
-            "student_gateway": "/api/student/"
+            "student_gateway": "/api/student/",
+            "test_pages": "/test/"
         }
     })
 
 urlpatterns = [
     path('', admin_views.home, name='home'),
+    path('test/', test_index, name='test-index'),  # Test pages landing
     path('admin/', admin.site.urls),
     path('api/core/', include('core.urls')),
     path('api/bridge/', include('bridge_core.urls')),
