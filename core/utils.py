@@ -24,7 +24,12 @@ def call_gemini_api(prompt):
     """
     try:
         # Configure Gemini API key  
-        api_key = os.environ.get('GEMINI_API_KEY', 'AIzaSyDYKCaq8y69q3MPouPLPNyki9UBAVS-x5Q')
+        api_key = os.environ.get('GEMINI_API_KEY')
+        
+        if not api_key:
+            print("DEBUG: GEMINI_API_KEY not found in environment")
+            return "Error: AI service not configured (Missing API Key)"
+            
         genai.configure(api_key=api_key)
         
         # Try multiple model names in order of preference

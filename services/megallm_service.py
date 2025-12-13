@@ -17,7 +17,7 @@ class MegaLLMService:
     
     def __init__(self):
         """Initialize Gemini client with API credentials"""
-        self.api_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDYKCaq8y69q3MPouPLPNyki9UBAVS-x5Q')
+        self.api_key = os.getenv('GEMINI_API_KEY')
         
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY not set in environment variables")
