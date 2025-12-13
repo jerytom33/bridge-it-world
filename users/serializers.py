@@ -78,6 +78,7 @@ class StudentProfileUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=255, required=False, allow_blank=True)
     email = serializers.EmailField(required=False)
     dob = serializers.DateField(source='date_of_birth', required=False, allow_null=True)
+    education_level = serializers.CharField(source='current_level', required=False, allow_blank=True)  # Alias for onboarding
     interests = serializers.ListField(
         child=serializers.CharField(max_length=50), 
         allow_empty=True, 
@@ -89,7 +90,8 @@ class StudentProfileUpdateSerializer(serializers.ModelSerializer):
         fields = [
             'name', 'email', 'phone', 'gender', 'dob', 
             'state', 'district', 'place', 'address',
-            'current_level', 'stream', 'career_goals', 'interests'
+            'current_level', 'education_level',  # Both fields supported
+            'stream', 'career_goals', 'interests'
         ]
     
     def validate_phone(self, value):
