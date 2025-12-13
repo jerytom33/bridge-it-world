@@ -1,18 +1,14 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Course
+from .models import Exam
 from core.utils import send_fcm_to_all
-import logging
 
-logger = logging.getLogger(__name__)
-
-@receiver(post_save, sender=Course)
-def notify_new_course(sender, instance, created, **kwargs):
+@receiver(post_save, sender=Exam)
+def notify_new_exam(sender, instance, created, **kwargs):
     if created:
-        print(f"📢 New Course Created: {instance.title}")
+        print(f"📢 New Exam Created: {instance.title}")
         
-        # Determine the source (Guide/Company)
-        provider_name = "New Opportunity"
+        provider_name = "New Exam"
         if hasattr(instance, 'company') and instance.company:
             try:
                 provider_name = instance.company.name
@@ -20,20 +16,19 @@ def notify_new_course(sender, instance, created, **kwargs):
                 pass
         elif hasattr(instance, 'guide') and instance.guide:
             try:
-                # Use name from related user if possible, or fallback
                 if hasattr(instance.guide, 'user'):
                     provider_name = f"{instance.guide.user.first_name} {instance.guide.user.last_name}"
                 else:
                     provider_name = "A Guide"
             except:
                 provider_name = "A Guide"
-            
+                
         send_fcm_to_all(
-            title=f"New Course Posted: {instance.title}",
-            body=f"{provider_name} has posted a new course. Check it out!",
-            data={
-                "type": "new_course",
-                "course_id": str(instance.id),
-                "click_action": "FLUTTER_NOTIFICATION_CLICK"
-            }
+             title=f"New Exam Alert: {instance.title}",
+             body=f"{provider_name} has posted a new exam. Prepare now!",
+             data={
+                 "type": "new_exam",
+                 "exam_id": str(instance.id),
+                 "click_action": "FLUTTER_NOTIFICATION_CLICK"
+             }
         )

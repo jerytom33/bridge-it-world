@@ -172,4 +172,29 @@ def notify_all_admins(notification_type, title, message, related_user=None, rela
     except Exception as e:
         print(f"Error notifying admins: {str(e)}")
     
+    
     return notifications
+
+def send_fcm_to_all(title, body, data=None):
+    """
+    Send FCM notification to all users (subscribed to 'all_users' topic)
+    """
+    try:
+        # Create message for 'all_users' topic
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title=title,
+                body=body,
+            ),
+            data=data or {},
+            topic='all_users',
+        )
+        
+        # Send message
+        response = messaging.send(message)
+        logger.info(f"Successfully sent FCM broadcast to 'all_users': {response}")
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error sending FCM broadcast: {e}")
+        return None
