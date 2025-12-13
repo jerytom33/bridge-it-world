@@ -127,47 +127,63 @@ class StudentProfileView(APIView):
     
     def patch(self, request):
         """Update current user's profile"""
-        user = request.user
-        profile, _ = StudentProfile.objects.get_or_create(user=user)
-        
-        from users.serializers import StudentProfileUpdateSerializer
-        
-        serializer = StudentProfileUpdateSerializer(
-            profile,
-            data=request.data,
-            partial=True,
-            context={'user': user}
-        )
-        
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            user = request.user
+            profile, _ = StudentProfile.objects.get_or_create(user=user)
             
-            # Return updated data
-            name = f"{user.first_name} {user.last_name}".strip() or user.username
+            from users.serializers import StudentProfileUpdateSerializer
             
-            return Response({
-                'success': True,
-                'message': 'Profile updated successfully',
-                'user': {
-                    'id': user.id,
-                    'name': name,
-                    'email': user.email,
-                    'phone': profile.phone or '',
-                    'gender': profile.gender or '',
-                    'dob': profile.date_of_birth.isoformat() if profile.date_of_birth else None,
-                    'state': profile.state or '',
-                    'district': profile.district or '',
-                    'place': profile.place or '',
-                    'address': profile.address or '',
-                    'current_level': profile.current_level or '',
-                    'stream': profile.stream or '',
-                    'career_goals': profile.career_goals or '',
-                    'interests': profile.interests or []
-                }
-            })
-        else:
+            serializer = StudentProfileUpdateSerializer(
+                profile,
+                data=request.data,
+                partial=True,
+                context={'user': user}
+            )
+            
+            if serializer.is_valid():
+                serializer.save()
+                
+                # Refresh from DB to get updated values
+                profile.refresh_from_db()
+                user.refresh_from_db()
+                
+                # Return updated data
+                name = f"{user.first_name} {user.last_name}".strip() or user.username
+                
+                return Response({
+                    'success': True,
+                    'message': 'Profile updated successfully',
+                    'user': {
+                        'id': user.id,
+                        'name': name,
+                        'email': user.email,
+                        'phone': profile.phone or '',
+                        'gender': profile.gender or '',
+                        'dob': profile.date_of_birth.isoformat() if profile.date_of_birth else None,
+                        'state': profile.state or '',
+                        'district': profile.district or '',
+                        'place': profile.place or '',
+                        'address': profile.address or '',
+                        'current_level': profile.current_level or '',
+                        'stream': profile.stream or '',
+                        'career_goals': profile.career_goals or '',
+                        'interests': profile.interests or []
+                    }
+                })
+            else:
+                return Response({
+                    'success': False,
+                    'error': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Exception as e:
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Profile update error: {str(e)}", exc_info=True)
+            
             return Response({
                 'success': False,
-                'error': serializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'error': f"Profile update failed: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
