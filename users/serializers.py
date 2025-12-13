@@ -71,3 +71,67 @@ class ProfileSetupSerializer(serializers.ModelSerializer):
             'stream': {'required': False},
             'career_goals': {'required': False},
         }
+
+
+class StudentProfileUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating student profile (supports both User and StudentProfile fields)"""
+    name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    email = serializers.EmailField(required=False)
+    dob = serializers.DateField(source='date_of_birth', required=False, allow_null=True)
+    interests = serializers.ListField(
+        child=serializers.CharField(max_length=50), 
+        allow_empty=True, 
+        required=False
+    )
+    
+    class Meta:
+        model = StudentProfile
+        fields = [
+            'name', 'email', 'phone', 'gender', 'dob', 
+            'state', 'district', 'place', 'address',
+            'current_level', 'stream', 'career_goals', 'interests'
+        ]
+    
+    def validate_phone(self, value):
+        """Validate phone number format"""
+        if value and not value.isdigit():
+            raise serializers.ValidationError("Phone number must contain only digits")
+        if value and len(value) != 10:
+            raise serializers.ValidationError("Phone number must be 10 digits")
+        return value
+    
+    def validate_gender(self, value):
+        """Validate gender"""
+        if value:
+            valid_genders = ['Male', 'Female', 'Other']
+            if value not in valid_genders:
+                raise serializers.ValidationError(f"Gender must be one of: {', '.join(valid_genders)}")
+        return value
+    
+    def validate_email(self, value):
+        """Ensure email is unique (except for current user)"""
+        user = self.context.get('user')
+        if user and User.objects.filter(email=value).exclude(id=user.id).exists():
+            raise serializers.ValidationError("Email already in use")
+        return value
+    
+    def update(self, instance, validated_data):
+        """Update both User and StudentProfile"""
+        user = instance.user
+        
+        # Update User fields
+        if 'name' in validated_data:
+            name = validated_data.pop('name')
+            name_parts = name.split(' ', 1)
+            user.first_name = name_parts[0]
+            user.last_name = name_parts[1] if len(name_parts) > 1 else ''
+        
+        if 'email' in validated_data:
+            email = validated_data.pop('email')
+            user.email = email
+            user.username = email  # Keep username in sync
+        
+        user.save()
+        
+        # Update StudentProfile fields
+        return super().update(instance, validated_data)

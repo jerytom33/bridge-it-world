@@ -75,8 +75,7 @@ class StudentRegistrationView(APIView):
             # Generate tokens
             refresh = RefreshToken.for_user(user)
 
-            return Response({
-                "success": True,
+            return Response({"success": True,
                 "message": "Student account created successfully!",
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
@@ -84,4 +83,91 @@ class StudentRegistrationView(APIView):
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
              return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class StudentProfileView(APIView):
+    """
+    GET: Retrieve current student's profile
+    PATCH: Update current student's profile
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Get current user's profile"""
+        user = request.user
+        profile, _ = StudentProfile.objects.get_or_create(user=user)
+        
+        # Prepare response data
+        from users.serializers import StudentProfileUpdateSerializer
+        
+        # Build name from User model
+        name = f"{user.first_name} {user.last_name}".strip() or user.username
+        
+        response_data = {
+            'success': True,
+            'user': {
+                'id': user.id,
+                'name': name,
+                'email': user.email,
+                'phone': profile.phone or '',
+                'gender': profile.gender or '',
+                'dob': profile.date_of_birth.isoformat() if profile.date_of_birth else None,
+                'state': profile.state or '',
+                'district': profile.district or '',
+                'place': profile.place or '',
+                'address': profile.address or '',
+                'current_level': profile.current_level or '',
+                'stream': profile.stream or '',
+                'career_goals': profile.career_goals or '',
+                'interests': profile.interests or []
+            }
+        }
+        
+        return Response(response_data)
+    
+    def patch(self, request):
+        """Update current user's profile"""
+        user = request.user
+        profile, _ = StudentProfile.objects.get_or_create(user=user)
+        
+        from users.serializers import StudentProfileUpdateSerializer
+        
+        serializer = StudentProfileUpdateSerializer(
+            profile,
+            data=request.data,
+            partial=True,
+            context={'user': user}
+        )
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            # Return updated data
+            name = f"{user.first_name} {user.last_name}".strip() or user.username
+            
+            return Response({
+                'success': True,
+                'message': 'Profile updated successfully',
+                'user': {
+                    'id': user.id,
+                    'name': name,
+                    'email': user.email,
+                    'phone': profile.phone or '',
+                    'gender': profile.gender or '',
+                    'dob': profile.date_of_birth.isoformat() if profile.date_of_birth else None,
+                    'state': profile.state or '',
+                    'district': profile.district or '',
+                    'place': profile.place or '',
+                    'address': profile.address or '',
+                    'current_level': profile.current_level or '',
+                    'stream': profile.stream or '',
+                    'career_goals': profile.career_goals or '',
+                    'interests': profile.interests or []
+                }
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 

@@ -13,41 +13,64 @@ class SignupView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        name = request.data.get('name', '').strip()
-        email = request.data.get('email')
-        password = request.data.get('password')
-        confirm_password = request.data.get('confirm_password')
+        try:
+            name = request.data.get('name', '').strip()
+            email = request.data.get('email')
+            password = request.data.get('password')
+            confirm_password = request.data.get('confirm_password')
 
-        # Basic validation
-        if not email or not password:
-            return Response({"error": "Email and password required"}, status=400)
-        if password != confirm_password:
-            return Response({"error": "Passwords do not match"}, status=400)
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "Email already taken"}, status=400)
+            # Basic validation
+            if not email or not password:
+                return Response({
+                    "success": False,
+                    "error": "Email and password required"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            if password != confirm_password:
+                return Response({
+                    "success": False,
+                    "error": "Passwords do not match"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            if User.objects.filter(email=email).exists():
+                return Response({
+                    "success": False,
+                    "error": "Email already registered"
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create user
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=password,
-            first_name=name.split()[0] if name else "",
-            last_name=" ".join(name.split()[1:]) if len(name.split()) > 1 else ""
-        )
+            # Create user
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=name.split()[0] if name else "",
+                last_name=" ".join(name.split()[1:]) if len(name.split()) > 1 else ""
+            )
 
-        # Create empty profile
-        StudentProfile.objects.get_or_create(user=user)
+            # Create empty profile
+            StudentProfile.objects.get_or_create(user=user)
 
-        # Generate tokens
-        refresh = RefreshToken.for_user(user)
+            # Generate tokens
+            refresh = RefreshToken.for_user(user)
 
-        return Response({
-            "success": True,
-            "message": "Account created!",
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user_id": user.id
-        }, status=201)
+            return Response({
+                "success": True,
+                "message": "User registered successfully",
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "user_id": user.id
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Registration error: {str(e)}", exc_info=True)
+            
+            return Response({
+                "success": False,
+                "error": f"Registration failed: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class LoginView(APIView):
