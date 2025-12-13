@@ -20,13 +20,11 @@ class StudentProfile(models.Model):
     place = models.CharField(max_length=100, blank=True)  # City/Location
     address = models.TextField(blank=True)
     
-    # New fields required for Bridge it
-    current_level = models.CharField(max_length=10, choices=LEVEL_CHOICES, blank=True)
+    # Education fields
+    current_level = models.CharField(max_length=50, choices=LEVEL_CHOICES, blank=True)
     stream = models.CharField(max_length=100, blank=True)
     interests = models.JSONField(default=list, blank=True)  # e.g. ["Coding", "Design"]
     career_goals = models.TextField(blank=True)
-    address = models.TextField(blank=True)
-    place = models.CharField(max_length=100, blank=True)  # City/Location
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

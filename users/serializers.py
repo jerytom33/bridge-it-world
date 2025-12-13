@@ -75,7 +75,7 @@ class ProfileSetupSerializer(serializers.ModelSerializer):
 
 class StudentProfileUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating student profile (supports both User and StudentProfile fields)"""
-    name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    name = serializers.SerializerMethodField()
     email = serializers.EmailField(required=False)
     dob = serializers.DateField(source='date_of_birth', required=False, allow_null=True)
     education_level = serializers.CharField(source='current_level', required=False, allow_blank=True)  # Alias for onboarding
@@ -93,6 +93,13 @@ class StudentProfileUpdateSerializer(serializers.ModelSerializer):
             'current_level', 'education_level',  # Both fields supported
             'stream', 'career_goals', 'interests'
         ]
+    
+    def get_name(self, obj):
+        """Get full name from User model"""
+        user = obj.user
+        full_name = f"{user.first_name} {user.last_name}".strip()
+        return full_name or user.username or user.email
+
     
     def validate_phone(self, value):
         """Validate phone number format"""
@@ -117,14 +124,23 @@ class StudentProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Email already in use")
         return value
     
+    def to_internal_value(self, data):
+        """Handle name field for write operations"""
+        # Store name temporarily if provided
+        self._name = data.get('name')
+        # Remove name from data dict so it doesn't cause validation errors
+        data_copy = data.copy()
+        if 'name' in data_copy:
+            data_copy.pop('name')
+        return super().to_internal_value(data_copy)
+    
     def update(self, instance, validated_data):
         """Update both User and StudentProfile"""
         user = instance.user
         
         # Update User fields
-        if 'name' in validated_data:
-            name = validated_data.pop('name')
-            name_parts = name.split(' ', 1)
+        if hasattr(self, '_name') and self._name:
+            name_parts = self._name.split(' ', 1)
             user.first_name = name_parts[0]
             user.last_name = name_parts[1] if len(name_parts) > 1 else ''
         
