@@ -45,7 +45,7 @@
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-link" href="{% url 'admin_logout' %}">Logout</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -95,7 +95,7 @@
             });
         });
     </script>
-    {% blockextra_js %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>
