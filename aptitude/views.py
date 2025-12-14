@@ -4,10 +4,13 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 import random
 import json
+import logging
 
 from .models import Question, UserAptitudeResult
 from .serializers import QuestionSerializer, UserAptitudeResultSerializer
 from core.utils import call_gemini_api
+
+logger = logging.getLogger(__name__)
 
 class AptitudeQuestionsView(APIView):
     """
@@ -118,14 +121,47 @@ class PersonalizedAptitudeQuestionsView(APIView):
     """
     GET /api/aptitude/personalized-questions/
     Generate AI-powered personalized aptitude questions based on education level
-    Query params: level (default: 10th), count (default: 10)
+    Query params: 
+        - level: Education level (10th, 12th, Diploma, Bachelor, Master)
+        - count: Number of questions (default: 10, max: 25)
     """
     permission_classes = [IsAuthenticated]
+    
+    # Valid education levels (standardized - singular forms)
+    VALID_LEVELS = ['10th', '12th', 'Diploma', 'Bachelor', 'Master']
+    
+    # Display names for logging and response
+    LEVEL_DISPLAY_NAMES = {
+        '10th': '10th Standard',
+        '12th': '12th Standard',
+        'Diploma': 'Diploma/Polytechnic',
+        'Bachelor': "Bachelor's Degree",
+        'Master': "Master's Degree"
+    }
     
     def get(self, request):
         try:
             education_level = request.GET.get('level', '10th')
             num_questions = min(int(request.GET.get('count', 10)), 25)  # Max 25 questions
+            
+            # Validate education level
+            if education_level not in self.VALID_LEVELS:
+                logger.warning(
+                    f"Invalid education level requested: '{education_level}' "
+                    f"(user: {request.user.username})"
+                )
+                return Response({
+                    'error': f'Invalid education level: {education_level}',
+                    'valid_levels': self.VALID_LEVELS,
+                    'message': f'Please use one of: {", ".join(self.VALID_LEVELS)}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Log the request for debugging
+            logger.info(
+                f"Generating {num_questions} questions for "
+                f"{self.LEVEL_DISPLAY_NAMES.get(education_level, education_level)} "
+                f"(user: {request.user.username})"
+            )
             
             # Get user profile data if available
             user_profile = {
@@ -142,21 +178,38 @@ class PersonalizedAptitudeQuestionsView(APIView):
                 user_profile=user_profile
             )
             
+            logger.info(
+                f"Successfully generated {len(questions)} questions for "
+                f"{education_level} level (user: {request.user.username})"
+            )
+            
             return Response({
                 'success': True,
                 'data': {
                     'questions': questions,
                     'education_level': education_level,
+                    'level_display_name': self.LEVEL_DISPLAY_NAMES.get(education_level),
                     'total_questions': len(questions)
                 }
             })
             
+        except ValueError as e:
+            logger.error(f"Validation error: {str(e)}")
+            return Response(
+                {'error': f'Invalid request parameters: {str(e)}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
-            print(f"DEBUG: View Exception: {str(e)}")
+            logger.error(
+                f"Failed to generate questions for level '{education_level}': {str(e)}"
+            )
             import traceback
             traceback.print_exc()
             return Response(
-                {'error': f'Failed to generate questions: {str(e)}'}, 
+                {
+                    'error': f'Failed to generate questions for {education_level} level',
+                    'detail': str(e)
+                }, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 

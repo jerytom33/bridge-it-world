@@ -134,31 +134,76 @@ Return ONLY valid JSON, no markdown backticks."""
         num_questions: int = 10,
         user_profile: Optional[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
-        """Generate personalized aptitude test questions"""
+        """Generate personalized aptitude test questions with level-appropriate difficulty"""
+        
+        # Level-specific context and difficulty guidance
+        level_context = {
+            '10th': {
+                'description': '10th standard (secondary school)',
+                'difficulty_mix': 'easy (60%), medium (30%), hard (10%)',
+                'content_guidance': 'Age-appropriate for 15-16 year olds, focus on fundamental concepts',
+                'topics': 'Basic arithmetic, simple reasoning, general awareness suitable for teenagers'
+            },
+            '12th': {
+                'description': '12th standard (higher secondary/pre-university)',
+                'difficulty_mix': 'easy (30%), medium (50%), hard (20%)',
+                'content_guidance': 'Pre-university level, preparation for competitive exams',
+                'topics': 'Advanced mathematics, logical reasoning, current affairs, science concepts'
+            },
+            'Diploma': {
+                'description': 'Diploma/Polytechnic level',
+                'difficulty_mix': 'easy (25%), medium (50%), hard (25%)',
+                'content_guidance': 'Technical and vocational focus, practical problem-solving',
+                'topics': 'Technical aptitude, practical reasoning, industry-relevant knowledge'
+            },
+            'Bachelor': {
+                'description': "Bachelor's degree (undergraduate)",
+                'difficulty_mix': 'easy (20%), medium (40%), hard (40%)',
+                'content_guidance': 'Undergraduate-level analytical thinking and reasoning',
+                'topics': 'Complex problem solving, analytical reasoning, professional scenarios'
+            },
+            'Master': {
+                'description': "Master's degree (postgraduate)",
+                'difficulty_mix': 'easy (10%), medium (30%), hard (60%)',
+                'content_guidance': 'Advanced postgraduate-level critical thinking',
+                'topics': 'Advanced analytics, strategic thinking, research-oriented problems, complex scenarios'
+            }
+        }
+        
+        context = level_context.get(education_level, level_context['10th'])
+        
         profile_context = ""
         if user_profile:
             profile_context = f"\nUser interests: {user_profile.get('interests', 'General')}"
-        
-        prompt = f"""Generate {num_questions} aptitude test questions for {education_level} level.{profile_context}
 
-Include mix of:
+        prompt = f"""Generate {num_questions} aptitude test questions for {context['description']} level.{profile_context}
+
+IMPORTANT - Level-Appropriate Content:
+- Target difficulty distribution: {context['difficulty_mix']}
+- Content guidance: {context['content_guidance']}
+- Recommended topics: {context['topics']}
+
+Question Categories (include mix of):
 - Logical reasoning (30%)
 - Quantitative aptitude (30%)
 - Verbal ability (20%)
 - General knowledge (20%)
 
 Provide a JSON array with each question having:
-- question: The question text
+- question: The question text (appropriate for {education_level} level)
 - options: Array of 4 options (A, B, C, D)
-- correct_answer: The correct option letter
-- difficulty: easy/medium/hard
-- category: The category name
+- correct_answer: The correct option letter (A, B, C, or D)
+- difficulty: easy/medium/hard (follow the distribution above)
+- category: The category name (Logical reasoning, Quantitative aptitude, Verbal ability, or General knowledge)
 - explanation: Brief explanation of correct answer
+
+CRITICAL: Ensure questions are genuinely appropriate for {context['description']}. 
+Adjust vocabulary, complexity, and context to match the education level.
 
 Return ONLY valid JSON array, no markdown backticks."""
 
         messages = [
-            {"role": "system", "content": "You are an expert aptitude test creator."},
+            {"role": "system", "content": "You are an expert aptitude test creator who tailors questions precisely to education levels."},
             {"role": "user", "content": prompt}
         ]
         
