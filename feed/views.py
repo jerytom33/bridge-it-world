@@ -46,7 +46,7 @@ class LikePostView(APIView):
             post.likes_count = max(0, post.likes_count - 1)
             post.save()
             return Response({
-                'message': 'Post unliked successfully',
+                'success': True,
                 'is_liked': False,
                 'like_count': post.likes_count
             }, status=status.HTTP_200_OK)
@@ -76,7 +76,7 @@ class LikePostView(APIView):
                 pass
             
             return Response({
-                'message': 'Post liked successfully',
+                'success': True,
                 'is_liked': True,
                 'like_count': post.likes_count
             }, status=status.HTTP_201_CREATED)
@@ -101,7 +101,7 @@ class SavePostView(APIView):
             # User already saved the post, so unsave it
             save.delete()
             return Response({
-                'message': 'Post unsaved successfully',
+                'success': True,
                 'is_saved': False
             }, status=status.HTTP_200_OK)
         else:
@@ -127,7 +127,7 @@ class SavePostView(APIView):
                 pass
             
             return Response({
-                'message': 'Post saved successfully',
+                'success': True,
                 'is_saved': True
             }, status=status.HTTP_201_CREATED)
 
@@ -149,4 +149,72 @@ class ViewPostView(APIView):
         return Response({
             'message': 'Post view tracked successfully',
             'view_count': post.views_count
+        }, status=status.HTTP_200_OK)
+
+
+class SavedPostsView(generics.ListAPIView):
+    """
+    GET /api/feed/posts/saved/
+    Return all posts saved/bookmarked by the current user
+    """
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get all post IDs saved by the current user
+        saved_post_ids = Save.objects.filter(
+            user=self.request.user
+        ).values_list('post_id', flat=True)
+        
+        # Return posts that are saved, ordered by most recently saved first
+        return Post.objects.filter(
+            id__in=saved_post_ids,
+            is_active=True
+        ).select_related('author').order_by('-created_at')
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'success': True,
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+class LikedPostsView(generics.ListAPIView):
+    """
+    GET /api/feed/posts/liked/
+    Return all posts liked by the current user
+    """
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get all post IDs liked by the current user
+        liked_post_ids = Like.objects.filter(
+            user=self.request.user
+        ).values_list('post_id', flat=True)
+        
+        # Return posts that are liked, ordered by most recently liked first
+        return Post.objects.filter(
+            id__in=liked_post_ids,
+            is_active=True
+        ).select_related('author').order_by('-created_at')
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'success': True,
+            'data': serializer.data
         }, status=status.HTTP_200_OK)
