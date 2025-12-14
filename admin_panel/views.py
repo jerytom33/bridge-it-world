@@ -69,7 +69,7 @@ def approve_guide(request, guide_id):
                 message='Congratulations! Your guide application has been approved. You can now access all guide features.'
             )
             
-            messages.success(request, f'Guide {guide.user.username} has been approved successfully.')
+            messages.success(request, f'✅ Guide Approved: {guide.user.get_full_name() or guide.user.username} has been approved and can now access all guide features.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Guide not found.')
         except Exception as e:
@@ -123,7 +123,7 @@ def approve_company(request, company_id):
                 message='Congratulations! Your company registration has been approved. You can now post jobs and access all company features.'
             )
             
-            messages.success(request, f'Company {company.user.username} has been approved successfully.')
+            messages.success(request, f'✅ Company Approved: {company.user.get_full_name() or company.user.username} has been approved and can now post jobs and create content.')
         except CustomUser.DoesNotExist:
             messages.error(request, 'Company not found.')
         except Exception as e:
