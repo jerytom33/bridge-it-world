@@ -110,10 +110,16 @@ def approve_company(request, company_id):
     if request.method == 'POST':
         try:
             from core.utils import create_notification
+            import logging
+            logger = logging.getLogger(__name__)
             
+            logger.info(f"Approving company with ID: {company_id}")
             company = CustomUser.objects.get(id=company_id, role='company')
+            logger.info(f"Found company: {company.user.username}, current is_approved: {company.is_approved}")
+            
             company.is_approved = True
             company.save()
+            logger.info(f"Company approved and saved: {company.user.username}, new is_approved: {company.is_approved}")
             
             # Create notification for company
             create_notification(
@@ -124,10 +130,13 @@ def approve_company(request, company_id):
             )
             
             messages.success(request, f'✅ Company Approved: {company.user.get_full_name() or company.user.username} has been approved and can now post jobs and create content.')
+            logger.info(f"Success message added for company: {company.user.username}")
         except CustomUser.DoesNotExist:
             messages.error(request, 'Company not found.')
+            logger.error(f"Company with ID {company_id} not found")
         except Exception as e:
             messages.error(request, f'Error approving company: {str(e)}')
+            logger.error(f"Error approving company {company_id}: {str(e)}")
     return redirect('manage_guides_companies')
 
 @admin_required
