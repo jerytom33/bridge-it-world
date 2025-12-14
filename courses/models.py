@@ -18,7 +18,7 @@ class Course(models.Model):
     description = models.TextField()
     is_certified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    thumbnail = models.ImageField(upload_to='thumbnails/courses/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

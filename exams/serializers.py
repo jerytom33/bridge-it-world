@@ -11,11 +11,7 @@ class ExamSerializer(serializers.ModelSerializer):
                  'description', 'is_active', 'created_at', 'image', 'is_saved']
     
     def get_image(self, obj):
-        if obj.thumbnail:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.thumbnail.url)
-        return None
+        return obj.image_url if obj.image_url else None
     
     def get_is_saved(self, obj):
         request = self.context.get('request')

@@ -13,7 +13,7 @@ class Exam(models.Model):
     last_date = models.DateField()
     link = models.URLField()
     description = models.TextField()
-    thumbnail = models.ImageField(upload_to='thumbnails/exams/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
