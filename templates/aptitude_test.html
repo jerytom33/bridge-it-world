@@ -302,7 +302,8 @@
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                    }
+                    },
+                    credentials: 'include'  // Send session cookies for authentication
                 });
 
                 if (!response.ok) {
@@ -379,6 +380,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
+                    credentials: 'include',  // Send session cookies
                     body: JSON.stringify({
                         questions: currentQuestions,
                         answers: userAnswers
