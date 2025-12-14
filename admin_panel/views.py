@@ -55,11 +55,17 @@ def approve_guide(request, guide_id):
     """Approve a guide application"""
     if request.method == 'POST':
         try:
-            from core.utils import create_notification
+            from core.utils import create_notification  
+            import logging
+            logger = logging.getLogger(__name__)
             
+            logger.info(f"Approving guide with ID: {guide_id}")
             guide = CustomUser.objects.get(id=guide_id, role='guide')
+            logger.info(f"Found guide: {guide.user.username}, current is_approved: {guide.is_approved}")
+            
             guide.is_approved = True
             guide.save()
+            logger.info(f"Guide approved and saved: {guide.user.username}, new is_approved: {guide.is_approved}")
             
             # Create notification for guide
             create_notification(
@@ -70,10 +76,13 @@ def approve_guide(request, guide_id):
             )
             
             messages.success(request, f'✅ Guide Approved: {guide.user.get_full_name() or guide.user.username} has been approved and can now access all guide features.')
+            logger.info(f"Success message added for guide: {guide.user.username}")
         except CustomUser.DoesNotExist:
             messages.error(request, 'Guide not found.')
+            logger.error(f"Guide with ID {guide_id} not found")
         except Exception as e:
             messages.error(request, f'Error approving guide: {str(e)}')
+            logger.error(f"Error approving guide {guide_id}: {str(e)}")
     return redirect('manage_guides_companies')
 
 @admin_required
