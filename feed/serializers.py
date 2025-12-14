@@ -23,12 +23,13 @@ class PostSerializer(serializers.ModelSerializer):
     is_saved = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
+    image = serializers.URLField(source='media_url', read_only=True, allow_null=True)
     updated_at = serializers.DateTimeField(source='created_at', read_only=True)
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'content', 'author', 'created_at', 'updated_at', 
-                 'like_count', 'is_liked', 'is_saved']
+                 'like_count', 'is_liked', 'is_saved', 'image']
 
     def get_is_liked(self, obj):
         request = self.context.get('request')
