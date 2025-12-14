@@ -130,6 +130,15 @@ class PersonalizedAptitudeQuestionsView(APIView):
     # Valid education levels (standardized - singular forms)
     VALID_LEVELS = ['10th', '12th', 'Diploma', 'Bachelor', 'Master']
     
+    # Backward compatibility: Map old Flutter app values to new standardized values
+    LEVEL_ALIASES = {
+        'Degree': 'Bachelor',      # Flutter sends 'Degree' → map to 'Bachelor'
+        'Bachelors': 'Bachelor',   # Alternative plural form
+        'Masters': 'Master',       # Flutter sends 'Masters' → map to 'Master'
+        'Master\'s': 'Master',     # Alternative with apostrophe
+        'Bachelor\'s': 'Bachelor'  # Alternative with apostrophe
+    }
+    
     # Display names for logging and response
     LEVEL_DISPLAY_NAMES = {
         '10th': '10th Standard',
@@ -143,6 +152,15 @@ class PersonalizedAptitudeQuestionsView(APIView):
         try:
             education_level = request.GET.get('level', '10th')
             num_questions = min(int(request.GET.get('count', 10)), 25)  # Max 25 questions
+            
+            # Apply alias mapping for backward compatibility
+            if education_level in self.LEVEL_ALIASES:
+                original_level = education_level
+                education_level = self.LEVEL_ALIASES[education_level]
+                logger.info(
+                    f"Mapped legacy level '{original_level}' to '{education_level}' "
+                    f"(user: {request.user.username})"
+                )
             
             # Validate education level
             if education_level not in self.VALID_LEVELS:

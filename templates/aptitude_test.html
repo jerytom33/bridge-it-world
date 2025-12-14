@@ -230,12 +230,13 @@
             <div id="setupForm">
                 <div class="form-group">
                     <label for="educationLevel">Select Your Education Level:</label>
+                    <!-- Backend supports both old (Degree, Masters) and new (Bachelor, Master) values -->
                     <select id="educationLevel">
                         <option value="10th">10th Grade</option>
                         <option value="12th" selected>12th Grade</option>
                         <option value="Diploma">Diploma / Polytechnic</option>
-                        <option value="Bachelor">Bachelor's Degree</option>
-                        <option value="Master">Master's Degree</option>
+                        <option value="Bachelor">Bachelor's Degree (also accepts: Degree)</option>
+                        <option value="Master">Master's Degree (also accepts: Masters)</option>
                     </select>
                 </div>
 
