@@ -8,12 +8,51 @@
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">Guide Registration Form</h4>
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-person-badge"></i> Guide Registration Form</h4>
+                <small>Registering as: <strong>GUIDE</strong> (Career Mentor & Content Creator)</small>
             </div>
             <div class="card-body">
-                <p class="text-muted">Please fill out this form to apply as a guide. Your application will be reviewed
-                    by our admin team.</p>
+                <!-- Role Information Alert -->
+                <div class="alert alert-info border-start border-4 border-info" role="alert">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-info-circle-fill fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="alert-heading">Understanding BridgeIT Roles</h5>
+                            <p class="mb-2">BridgeIT has <strong>three distinct user roles</strong>:</p>
+                            <ul class="mb-2">
+                                <li><strong>Students:</strong> Use the app platform for career guidance, courses, and
+                                    job opportunities</li>
+                                <li><strong>Guides:</strong> Provide mentorship, create content, and help students
+                                    (requires admin approval)</li>
+                                <li><strong>Companies:</strong> Post jobs, exams, and bootcamps for students (requires
+                                    admin approval)</li>
+                            </ul>
+                            <p class="mb-0"><small><strong>Note:</strong> Admins manage the platform and approve
+                                    Guide/Company registrations.</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approval Process Alert -->
+                <div class="alert alert-warning border-start border-4 border-warning mb-4" role="alert">
+                    <div class="d-flex">
+                        <div>
+                            <i class="bi bi-clock-history fs-4 me-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1"><strong>Admin Approval Required</strong></h6>
+                            <p class="mb-1">Your application will be reviewed by our admin team within <strong>3-5
+                                    business days</strong>.</p>
+                            <p class="mb-0"><small>You will receive an email notification once your account is approved
+                                    or if additional information is needed.</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-muted">Please fill out this form accurately. All fields marked with * are required.</p>
 
                 <form method="post">
                     {% csrf_token %}
