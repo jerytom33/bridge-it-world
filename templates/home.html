@@ -71,83 +71,32 @@
             </div>
 
             <!-- Visual Content -->
-            <div class="relative mx-auto w-full max-w-[600px] lg:max-w-none">
+            <div class="relative mx-auto w-full max-w-[600px] lg:max-w-none flex items-center justify-center">
+                <!-- Abstract Hero Graphic -->
                 <div
-                    class="relative z-10 bg-white rounded-2xl shadow-2xl shadow-brand-900/10 border border-slate-100 overflow-hidden transform hover:scale-[1.02] transition-transform duration-500">
-                    <!-- Mock Dashboard Header -->
-                    <div class="bg-slate-50 border-b border-slate-100 p-4 flex items-center gap-4">
-                        <div class="flex gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-amber-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <div class="h-2 w-32 bg-slate-200 rounded-full"></div>
-                    </div>
-
-                    <!-- Mock Dashboard Body -->
-                    <div class="p-6 space-y-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="h-4 w-48 bg-slate-200 rounded mb-2"></div>
-                                <div class="h-3 w-32 bg-slate-100 rounded"></div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 font-bold">
-                                92%
-                            </div>
-                        </div>
-
-                        <!-- Progress Bars -->
-                        <div class="space-y-4">
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-xs font-semibold text-slate-500">
-                                    <span>Technical Skills</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-brand-500 w-[85%] rounded-full"></div>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-xs font-semibold text-slate-500">
-                                    <span>Soft Skills</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-accent-500 w-[65%] rounded-full"></div>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-xs font-semibold text-slate-500">
-                                    <span>Leadership</span>
-                                </div>
-                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-teal-400 w-[40%] rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recommendation Card -->
-                        <div class="bg-brand-50 rounded-xl p-4 flex gap-4 items-start">
-                            <div class="p-2 bg-white rounded-lg shadow-sm text-brand-600">
-                                <i data-lucide="trending-up" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-slate-800">Recommended Path</div>
-                                <div class="text-xs text-slate-600 mt-1">Based on your gap analysis, consider the Senior
-                                    React Developer certification track.</div>
-                            </div>
-                        </div>
-                    </div>
+                    class="relative z-10 w-full aspect-square max-w-md bg-gradient-to-tr from-brand-100 to-accent-100 rounded-full blur-3xl opacity-60 animate-pulse">
                 </div>
-
-                <!-- Floating Cards -->
-                <div class="absolute -left-12 bottom-12 z-20 bg-white p-4 rounded-xl shadow-xl border border-slate-100 hidden lg:flex items-center gap-3 animate-bounce"
-                    style="animation-duration: 3s;">
-                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                        <i data-lucide="award" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500">New Achievement</div>
-                        <div class="text-sm font-bold text-slate-800">Fast Learner</div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="grid grid-cols-2 gap-4 animate-float">
+                        <div class="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3">
+                            <div class="p-2 bg-brand-100 rounded-lg text-brand-600">
+                                <i data-lucide="file-text" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500">Resume Score</div>
+                                <div class="font-bold text-slate-900">92/100</div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3 translate-x-8 translate-y-8">
+                            <div class="p-2 bg-accent-100 rounded-lg text-accent-600">
+                                <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500">Aptitude</div>
+                                <div class="font-bold text-slate-900">Top 5%</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,97 +104,198 @@
     </div>
 </section>
 
-<!-- Features Section -->
-<section id="features" class="py-32 bg-slate-50/50">
+<!-- Core Features Section -->
+<section id="features" class="py-24 bg-slate-50/50">
     <div class="container mx-auto px-6 md:px-12 lg:px-20">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                Everything you need to <span class="text-gradient">level up</span>
+                Core <span class="text-gradient">Capabilities</span>
             </h2>
             <p class="text-slate-600 text-lg">
-                We combine cutting-edge technology with human expertise to provide the most comprehensive career
-                guidance platform available.
+                Powered by advanced AI to guide your career journey.
             </p>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            <!-- Feature 1 -->
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- AI Resume Analyzer -->
             <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                 <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-brand-50 text-brand-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                    class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500">
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">AI Skill Analysis</h3>
-                <p class="text-slate-600 leading-relaxed">Our advanced AI evaluates your current skill set against
-                    industry standards to identify gaps instantly.</p>
+                <div
+                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-brand-50 text-brand-600 relative z-10">
+                    <i data-lucide="file-scan" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 relative z-10">AI Resume Analyzer</h3>
+                <p class="text-slate-600 leading-relaxed relative z-10">
+                    Get instant, detailed feedback on your CV. Our AI highlights strengths, identifies gaps, and
+                    suggests improvements to beat ATS systems.
+                </p>
             </div>
 
-            <!-- Feature 2 -->
+            <!-- AI Aptitude Test -->
             <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                 <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-accent-50 text-accent-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="target" class="w-6 h-6"></i>
+                    class="absolute top-0 right-0 w-32 h-32 bg-accent-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500">
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">Personalized Roadmap</h3>
-                <p class="text-slate-600 leading-relaxed">Get a custom step-by-step plan tailored to your career goals,
-                    timeline, and learning style.</p>
+                <div
+                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-accent-50 text-accent-600 relative z-10">
+                    <i data-lucide="brain" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 relative z-10">AI Aptitude Test</h3>
+                <p class="text-slate-600 leading-relaxed relative z-10">
+                    Evaluate your logical reasoning and technical skills with adaptive tests designed to pinpoint your
+                    true potential.
+                </p>
             </div>
 
-            <!-- Feature 3 -->
+            <!-- Expert Mentorship -->
             <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                 <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-teal-50 text-teal-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                    class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:scale-150 transition-transform duration-500">
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">Expert Mentorship</h3>
-                <p class="text-slate-600 leading-relaxed">Connect with industry leaders who have walked your path and
-                    can guide you around obstacles.</p>
+                <div
+                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-teal-50 text-teal-600 relative z-10">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-3 relative z-10">Expert Mentorship</h3>
+                <p class="text-slate-600 leading-relaxed relative z-10">
+                    Connect 1-on-1 with industry veterans who can provide personalized guidance, mock interviews, and
+                    career advice.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Discover Section: Exams & Courses -->
+<section class="py-24 bg-white relative overflow-hidden">
+    <div class="container mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-16">
+            <!-- Upcoming Exams -->
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-amber-100 rounded-lg text-amber-600">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900">Upcoming Exams</h2>
+                </div>
+                <p class="text-slate-600 mb-8">
+                    Stay ahead of the curve. Prepare for key industry certifications and entrance exams with our curated
+                    schedules and study materials.
+                </p>
+
+                <div class="space-y-4">
+                    <!-- Static placeholders for now, would be dynamic later -->
+                    <div
+                        class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-amber-200 transition-colors cursor-pointer">
+                        <div class="text-center min-w-[60px]">
+                            <div class="text-xs text-slate-500 uppercase font-bold">OCT</div>
+                            <div class="text-2xl font-bold text-slate-900">15</div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-800">AWS Certified Solutions Architect</div>
+                            <div class="text-sm text-slate-500">Cloud Computing • 120 mins</div>
+                        </div>
+                        <div class="ml-auto">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                    </div>
+                    <div
+                        class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-amber-200 transition-colors cursor-pointer">
+                        <div class="text-center min-w-[60px]">
+                            <div class="text-xs text-slate-500 uppercase font-bold">NOV</div>
+                            <div class="text-2xl font-bold text-slate-900">02</div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-800">Google UX Design Certificate</div>
+                            <div class="text-sm text-slate-500">Design • Portfolio Review</div>
+                        </div>
+                        <div class="ml-auto">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <a href="#" class="text-brand-600 font-semibold hover:text-brand-700 flex items-center gap-2">
+                        View all exams <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- Feature 4 -->
-            <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="line-chart" class="w-6 h-6"></i>
+            <!-- Trending Courses -->
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900">Trending Courses</h2>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">Progress Tracking</h3>
-                <p class="text-slate-600 leading-relaxed">Visualize your growth with dynamic dashboards that track
-                    certifications, projects, and soft skills.</p>
-            </div>
+                <p class="text-slate-600 mb-8">
+                    Upskill with the most in-demand courses. From coding to leadership, find the right path to
+                    accelerate your growth.
+                </p>
 
-            <!-- Feature 5 -->
-            <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-rose-50 text-rose-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="briefcase" class="w-6 h-6"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">Job Matching</h3>
-                <p class="text-slate-600 leading-relaxed">Access a curated list of job openings that perfectly match
-                    your newly acquired skills.</p>
-            </div>
+                <div class="space-y-4">
+                    <div
+                        class="group flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 transition-colors cursor-pointer">
+                        <div
+                            class="w-20 h-20 rounded-lg bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-500">
+                            <i data-lucide="code-2" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
+                                    Python for Data Science</h4>
+                                <span
+                                    class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Bestseller</span>
+                            </div>
+                            <div class="text-sm text-slate-500 mt-1">Master Python, Pandas & NumPy</div>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                                <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> 1.2k
+                                    Students</span>
+                                <span class="flex items-center gap-1"><i data-lucide="star"
+                                        class="w-3 h-3 text-yellow-400 fill-current"></i> 4.8</span>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Feature 6 -->
-            <div
-                class="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div
-                    class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 bg-indigo-50 text-indigo-600 group-hover:scale-110 transition-transform">
-                    <i data-lucide="message-square" class="w-6 h-6"></i>
+                    <div
+                        class="group flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 transition-colors cursor-pointer">
+                        <div
+                            class="w-20 h-20 rounded-lg bg-pink-100 flex-shrink-0 flex items-center justify-center text-pink-500">
+                            <i data-lucide="figma" class="w-8 h-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">UI/UX
+                                    Design Masterclass</h4>
+                            </div>
+                            <div class="text-sm text-slate-500 mt-1">Design beautiful interfaces with Figma</div>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                                <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> 850
+                                    Students</span>
+                                <span class="flex items-center gap-1"><i data-lucide="star"
+                                        class="w-3 h-3 text-yellow-400 fill-current"></i> 4.9</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-3">Mock Interviews</h3>
-                <p class="text-slate-600 leading-relaxed">Practice with AI-driven interview simulations that give
-                    real-time feedback on your answers.</p>
+                <div class="mt-6">
+                    <a href="#" class="text-brand-600 font-semibold hover:text-brand-700 flex items-center gap-2">
+                        Explore all courses <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- How It Works Section -->
-<section id="how-it-works" class="py-32 relative">
+<section id="how-it-works" class="py-24 relative bg-slate-50">
     <div class="container mx-auto px-6 md:px-12 lg:px-20">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -260,7 +310,7 @@
 
                 <div class="space-y-10 relative">
                     <!-- Connecting Line -->
-                    <div class="absolute left-6 top-6 bottom-6 w-0.5 bg-slate-100 -z-10"></div>
+                    <div class="absolute left-6 top-6 bottom-6 w-0.5 bg-slate-200 -z-10"></div>
 
                     <!-- Step 1 -->
                     <div class="flex gap-6">
@@ -316,98 +366,9 @@
                 <div
                     class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-accent-100 rounded-3xl transform rotate-3 scale-105 opacity-50">
                 </div>
-                <img src="https://picsum.photos/600/600" alt="Career planning session"
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Career planning session"
                     class="relative rounded-3xl shadow-2xl object-cover w-full h-auto aspect-square hover:rotate-0 transition-transform duration-500">
-
-                <!-- Floater -->
-                <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl max-w-xs">
-                    <div class="flex items-center gap-4 mb-3">
-                        <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-                            <img src="https://picsum.photos/100/100" alt="User">
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-900">Sarah J.</div>
-                            <div class="text-xs text-green-600 font-medium">Just landed a job!</div>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-600 italic">"BridgeIT helped me pivot from Sales to UX Design in just 6
-                        months!"</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials Section -->
-<section id="testimonials" class="py-32 bg-slate-900 text-white">
-    <div class="container mx-auto px-6 md:px-12 lg:px-20">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Don't just take our word for it</h2>
-            <p class="text-slate-400 text-lg">Join thousands of professionals who have accelerated their careers.</p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Testimonial 1 -->
-            <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:bg-slate-800 transition-colors">
-                <div class="flex gap-1 mb-6 text-yellow-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                </div>
-                <p class="text-slate-300 mb-6 leading-relaxed">"The skill gap analysis was an eye-opener. I didn't
-                    realize I was missing key architectural concepts until BridgeIT pointed them out."</p>
-                <div class="flex items-center gap-4">
-                    <img src="https://picsum.photos/101/101" alt="Alex Rivera"
-                        class="w-12 h-12 rounded-full border-2 border-brand-500">
-                    <div>
-                        <div class="font-bold">Alex Rivera</div>
-                        <div class="text-sm text-slate-400">Senior Frontend Dev</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Testimonial 2 -->
-            <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:bg-slate-800 transition-colors">
-                <div class="flex gap-1 mb-6 text-yellow-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                </div>
-                <p class="text-slate-300 mb-6 leading-relaxed">"My mentor was fantastic. Being able to chat with someone
-                    who is actually in the role I wanted made all the difference."</p>
-                <div class="flex items-center gap-4">
-                    <img src="https://picsum.photos/102/102" alt="Marcus Chen"
-                        class="w-12 h-12 rounded-full border-2 border-brand-500">
-                    <div>
-                        <div class="font-bold">Marcus Chen</div>
-                        <div class="text-sm text-slate-400">Product Manager</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Testimonial 3 -->
-            <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:bg-slate-800 transition-colors">
-                <div class="flex gap-1 mb-6 text-yellow-400">
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                </div>
-                <p class="text-slate-300 mb-6 leading-relaxed">"The roadmap feature kept me accountable. Seeing my
-                    progress bar fill up gave me the motivation to keep studying every night."</p>
-                <div class="flex items-center gap-4">
-                    <img src="https://picsum.photos/103/103" alt="Elena Rodriguez"
-                        class="w-12 h-12 rounded-full border-2 border-brand-500">
-                    <div>
-                        <div class="font-bold">Elena Rodriguez</div>
-                        <div class="text-sm text-slate-400">Data Scientist</div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
