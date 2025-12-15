@@ -331,7 +331,7 @@ def register_guide(request):
                 user=user,
                 bio=bio,
                 expertise=[e.strip() for e in expertise.split(',')] if expertise else [],
-                experience_years=experience_years,
+                experience_years=int(experience_years) if experience_years and experience_years.strip() else None,
                 company=company,
                 position=position,
                 linkedin_url=linkedin_url
